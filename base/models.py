@@ -51,3 +51,46 @@ class Building(MPTTModel):
 
     def __str__(self):
         return "%s %s" % (self.name, self.institution)
+
+
+class MeterType(models.Model):
+    name = models.CharField('Тип лічильника', max_length=200)
+    unit = models.CharField('Одиниця виміру', max_length=50)
+
+    class Meta:
+        verbose_name = 'Тип лічильника'
+        verbose_name_plural = 'Типи лічильників'
+
+    def __str__(self):
+        return self.name
+
+
+class Meter(MPTTModel):
+    name = models.CharField('Iдентифікатор лічильника', max_length=200)
+    institution = models.ForeignKey(Institution, verbose_name='Заклад')
+    building = models.ForeignKey(Building, verbose_name='Будівля')
+    meter_type = models.ForeignKey(MeterType, verbose_name='Тип лічильника')
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True,
+                            verbose_name='Орендодавець')
+
+    class Meta:
+        verbose_name = 'Лічильник'
+        verbose_name_plural = 'Лічильники'
+
+    def __str__(self):
+        return "%s %s" % (self.meter_type, self.name)
+
+
+class MeterData(models.Model):
+    meter = models.ForeignKey(Meter, verbose_name='Лічильник')
+    prev_data = models.DecimalField('Попередні дані', max_digits=9, decimal_places=3)
+    cur_data = models.DecimalField('Поточні дані', max_digits=9, decimal_places=3)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    manager = models.ForeignKey(User, verbose_name='Відповідальна особа')
+
+    class Meta:
+        verbose_name = 'Показник лічильника'
+        verbose_name_plural = 'Показники лічильників'
+
+    def __str__(self):
+        return "%s %s" % (self.meter, self.timestamp)
