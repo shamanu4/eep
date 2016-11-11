@@ -41,10 +41,16 @@ INSTALLED_APPS = [
 
     # 3rd-party apps.
     'mptt',
+    'guardian',
 
     # Project apps.
     'base',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
