@@ -9,10 +9,13 @@ li.list-group-item span {
 .login-form {
   height: auto;
   margin: 0 auto;
+  padding-top: 16.3%;
+  img {
+    width: 68%;
+  }
   form {
-    width: 33.3%;
-    margin: 0 auto;
-    padding-top: 33.33%;
+    width: 75%;
+    padding-top: 7.5%;
     button {
       float: right;
     }
