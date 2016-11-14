@@ -28,6 +28,29 @@ class User(AbstractUser, MPTTModel):
         return self.first_name
 
 
+class Category(models.Model):
+    name = models.CharField('Назва категорії', max_length=100)
+
+    class Meta:
+        verbose_name = "Категорія"
+        verbose_name_plural = "Категорії"
+
+    def __str__(self):
+        return self.name
+
+
+class ObjectPurpose(models.Model):
+    name = models.CharField('', max_length=100)
+    category = models.ForeignKey(Category, verbose_name='Категорія')
+
+    class Meta:
+        verbose_name = "Призначення об'єкта"
+        verbose_name_plural = "Призначення об'єктів"
+
+    def __str__(self):
+        return self.name
+
+
 class Institution(models.Model):
     name = models.CharField('Назва закладу', max_length=500)
 
@@ -42,6 +65,9 @@ class Institution(models.Model):
 class Building(MPTTModel):
     name = models.CharField('Будівля', max_length=500)
     institution = models.ForeignKey(Institution, verbose_name='Заклад')
+    square = models.IntegerField('Площа')
+    purpose = models.ManyToManyField(ObjectPurpose, verbose_name="Призначення об'єкта")
+    date_from = models.DateField('Дата здачі в експлуатацію')
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True,
                             verbose_name='Орендодавець')
 
