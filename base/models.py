@@ -3,6 +3,7 @@ from django.contrib.auth.models import UserManager
 from django.db import models
 from django.utils.datetime_safe import date
 from mptt.models import MPTTModel, TreeForeignKey
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class User(AbstractUser, MPTTModel):
@@ -58,6 +59,9 @@ class Institution(models.Model):
     name = models.CharField('Назва закладу', max_length=500)
 
     class Meta:
+        permissions = (
+            ('view_institution', 'View institutions'),
+        )
         verbose_name = 'Заклад, установа'
         verbose_name_plural = 'Заклади, установи'
 
@@ -76,6 +80,9 @@ class Building(MPTTModel):
                             verbose_name='Орендодавець')
 
     class Meta:
+        permissions = (
+            ('view_buildings', 'View buildings'),
+        )
         verbose_name = 'Будівля'
         verbose_name_plural = 'Будівлі'
 
@@ -156,3 +163,55 @@ class Receipt(models.Model):
 
     def __str__(self):
         return "%s %s %s грн." % (self.institution, self. meter_type, self.price)
+
+
+class ComponentType(models.Model):
+    name = models.CharField('Назва', max_length=250)
+    unit = models.CharField('Одиниця виміру', max_length=100)
+
+    class Meta:
+        verbose_name = 'Тип компоненту'
+        verbose_name_plural = 'Типи компонентів'
+
+    def __str__(self):
+        return self.name
+
+
+class Component(models.Model):
+    building = models.ForeignKey(Building, verbose_name='Заклад')
+    type = models.ForeignKey(ComponentType, verbose_name='Тип')
+    quantity = models.DecimalField('Кількість', max_digits=1000, decimal_places=2)
+
+    class Meta:
+        verbose_name = 'Компонент'
+        verbose_name_plural = 'Компоненти'
+
+    def __str__(self):
+        return "%s %s %s грн." % (self.building, self.type, self.quantity)
+
+
+class FeatureType(models.Model):
+    component_type = models.ForeignKey(ComponentType, verbose_name='Тип компоненту')
+    name = models.CharField('Назва', max_length=250)
+
+    class Meta:
+        verbose_name = 'Тип Характеристики'
+        verbose_name_plural = 'Типи характеристик'
+
+    def __str__(self):
+        return self.name
+
+
+class Feature(models.Model):
+    component = models.ForeignKey(Component, verbose_name='Компонент')
+    feature_type = models.ForeignKey(FeatureType, verbose_name='Тип характеристики')
+    percentage = models.DecimalField('Відсоток від загальної кількості', max_digits=5, decimal_places=2, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    date_from = models.DateField('Від')
+    date_until = models.DateField('До', blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Характеристика'
+        verbose_name_plural = 'Характеристики'
+
+    def __str__(self):
+        return "%s %s %s грн." % (self.component, self.feature_type, self.percentage)

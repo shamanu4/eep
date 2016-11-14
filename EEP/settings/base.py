@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # 3rd-party apps.
     'mptt',
     'guardian',
+    'bootstrap3',
 
     # Project apps.
     'base',

@@ -1,5 +1,16 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-    <h1>Hello, world!</h1>
+    <div class="row index-page">
+        <div class="col-md-8">
+            <ul class="list-group">
+                {% for build in buildings %}
+                    {% ifchanged %}
+                        <li href="#" class="list-group-item active"><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> {{ build.institution }}</li>
+                    {% endifchanged %}
+                    <li href="#" class="list-group-item"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> {{ build.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 {% endblock %}

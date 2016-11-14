@@ -1,0 +1,20 @@
+{% extends 'base/base.html' %}
+{% load bootstrap3 %}
+
+{% block title %}Вхід{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12 login-form">
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">
+                        Submit
+                    </button>
+                {% endbuttons %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,3 +1,17 @@
+.index-page {
+  margin-top: 3.5%; }
 
+li.list-group-item span {
+  margin-right: 2.63%; }
+
+.login-form {
+  height: auto;
+  margin: 0 auto; }
+  .login-form form {
+    width: 33.3%;
+    margin: 0 auto;
+    padding-top: 33.33%; }
+    .login-form form button {
+      float: right; }
 
 /*# sourceMappingURL=style.css.map */
