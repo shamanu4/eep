@@ -141,5 +141,18 @@ class Rate(models.Model):
         return "%s %s грн." % (self.meter_type, self.price)
 
 
+class Receipt(models.Model):
+    meter_type = models.ForeignKey(MeterType, verbose_name='Тип лічильника')
+    institution = models.ForeignKey(Institution, verbose_name='Заклад')
+    building = models.ForeignKey(Building, verbose_name='Будівля')
+    date_from = models.DateField('Від')
+    date_until = models.DateField('До')
+    quantity = models.DecimalField('Кількість використаних одиниць', max_digits=9, decimal_places=3)
+    price = models.DecimalField('Вартість', max_digits=10, decimal_places=2)
 
+    class Meta:
+        verbose_name = 'Рахунок'
+        verbose_name_plural = 'Рахунки'
 
+    def __str__(self):
+        return "%s %s %s грн." % (self.institution, self. meter_type, self.price)
