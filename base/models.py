@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.datetime_safe import date
 from mptt.models import MPTTModel, TreeForeignKey
 
 
@@ -40,7 +41,7 @@ class Category(models.Model):
 
 
 class ObjectPurpose(models.Model):
-    name = models.CharField('', max_length=100)
+    name = models.CharField("Призначення об'єкту", max_length=100)
     category = models.ForeignKey(Category, verbose_name='Категорія')
 
     class Meta:
@@ -67,7 +68,7 @@ class Building(MPTTModel):
     institution = models.ForeignKey(Institution, verbose_name='Заклад')
     square = models.IntegerField('Площа')
     purpose = models.ManyToManyField(ObjectPurpose, verbose_name="Призначення об'єкта")
-    date_from = models.DateField('Дата здачі в експлуатацію')
+    date_from = models.DateField('Дата здачі в експлуатацію', default=date.today)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True,
                             verbose_name='Орендодавець')
 
