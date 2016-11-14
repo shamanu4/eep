@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import UserManager
 from django.db import models
+from django.utils import timezone
 from django.utils.datetime_safe import date
 from mptt.models import MPTTModel, TreeForeignKey
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -187,7 +188,7 @@ class Component(models.Model):
         verbose_name_plural = 'Компоненти'
 
     def __str__(self):
-        return "%s %s %s грн." % (self.building, self.type, self.quantity)
+        return "%s %s %s" % (self.building, self.type, self.quantity)
 
 
 class FeatureType(models.Model):
@@ -206,7 +207,7 @@ class Feature(models.Model):
     component = models.ForeignKey(Component, verbose_name='Компонент')
     feature_type = models.ForeignKey(FeatureType, verbose_name='Тип характеристики')
     percentage = models.DecimalField('Відсоток від загальної кількості', max_digits=5, decimal_places=2, validators=[MinValueValidator(0), MaxValueValidator(100)])
-    date_from = models.DateField('Від')
+    date_from = models.DateField('Від', blank=True, null=True)
     date_until = models.DateField('До', blank=True, null=True)
 
     class Meta:
@@ -215,3 +216,11 @@ class Feature(models.Model):
 
     def __str__(self):
         return "%s %s %s грн." % (self.component, self.feature_type, self.percentage)
+
+    def save(self, *args, **kwargs):
+        comp = Component.objects.get(pk=self.component_id)
+        build = Building.objects.get(pk=comp.building_id)
+        self.date_from = build.date_from
+        super(Feature, self).save(*args, **kwargs)
+
+

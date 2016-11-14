@@ -8,11 +8,8 @@ li.list-group-item span {
   height: auto;
   margin: 0 auto;
   padding-top: 16.3%; }
-  .login-form img {
-    width: 68%; }
   .login-form form {
-    width: 75%;
-    padding-top: 7.5%; }
+    padding-top: 2.5%; }
     .login-form form button {
       float: right; }
 
