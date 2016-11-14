@@ -1,5 +1,5 @@
 from django.contrib import admin
-from base.models import User, Category, ObjectPurpose, Institution, Building, MeterType, Meter, MeterData
+from base.models import User, Category, ObjectPurpose, Institution, Building, MeterType, Meter, MeterData, Rate
 
 
 admin.site.register(User)
@@ -10,3 +10,4 @@ admin.site.register(Building)
 admin.site.register(MeterType)
 admin.site.register(Meter)
 admin.site.register(MeterData)
+admin.site.register(Rate)

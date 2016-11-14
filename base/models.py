@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import UserManager
 from django.db import models
 from django.utils.datetime_safe import date
 from mptt.models import MPTTModel, TreeForeignKey
@@ -11,6 +12,7 @@ class User(AbstractUser, MPTTModel):
     first_name = models.CharField("Ім'я", max_length=50)
     middle_name = models.CharField('По-батькові', max_length=50)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True, verbose_name='Керівник')
+    objects = UserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -20,7 +22,7 @@ class User(AbstractUser, MPTTModel):
         verbose_name_plural = 'Користувачі'
 
     def __str__(self):
-        return "%s %s. %s." % (self.last_name, self.first_name[0], self.middle_name[0])
+        return self.email
 
     def get_full_name(self):
         return "%s %s. %s." % (self.last_name, self.first_name, self.middle_name)
@@ -49,7 +51,7 @@ class ObjectPurpose(models.Model):
         verbose_name_plural = "Призначення об'єктів"
 
     def __str__(self):
-        return self.name
+        return "%s: %s" % (self.category, self.name)
 
 
 class Institution(models.Model):
@@ -67,6 +69,7 @@ class Building(MPTTModel):
     name = models.CharField('Будівля', max_length=500)
     institution = models.ForeignKey(Institution, verbose_name='Заклад')
     square = models.IntegerField('Площа')
+    category = models.ForeignKey(Category, verbose_name='Категорія')
     purpose = models.ManyToManyField(ObjectPurpose, verbose_name="Призначення об'єкта")
     date_from = models.DateField('Дата здачі в експлуатацію', default=date.today)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True,
@@ -121,3 +124,22 @@ class MeterData(models.Model):
 
     def __str__(self):
         return "%s %s" % (self.meter, self.timestamp)
+
+
+class Rate(models.Model):
+    category = models.ForeignKey(Category, verbose_name='Категорія', blank=True, null=True)
+    meter_type = models.ForeignKey(MeterType, verbose_name='Тип лічильника')
+    price = models.DecimalField('Тариф', max_digits=6, decimal_places=2)
+    date_from = models.DateField('Тариф дійсний з')
+    date_until = models.DateField('Тариф дійсний до', blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Тариф'
+        verbose_name_plural = 'Тарифи'
+
+    def __str__(self):
+        return "%s %s грн." % (self.meter_type, self.price)
+
+
+
+
