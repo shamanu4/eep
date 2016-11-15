@@ -1,10 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import UserManager
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import timezone
 from django.utils.datetime_safe import date
 from mptt.models import MPTTModel, TreeForeignKey
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils.translation import ugettext_lazy as _
 
 
 class User(AbstractUser, MPTTModel):
@@ -217,10 +218,19 @@ class Feature(models.Model):
     def __str__(self):
         return "%s %s %s грн." % (self.component, self.feature_type, self.percentage)
 
+    def clean(self):
+        current_day = date.today()
+        if self.date_until > current_day:
+            raise ValidationError({
+                'date_until': _("Поле не може бути більшим поточної дати")
+            })
+
+    def full_clean(self, *args, **kwargs):
+        return self.clean()
+
     def save(self, *args, **kwargs):
+        self.full_clean()
         comp = Component.objects.get(pk=self.component_id)
         build = Building.objects.get(pk=comp.building_id)
         self.date_from = build.date_from
         super(Feature, self).save(*args, **kwargs)
-
-
