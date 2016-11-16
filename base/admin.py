@@ -4,18 +4,19 @@ from base.models import User, Category, ObjectPurpose, Institution, Building, Me
 
 
 class InstitutionAdmin(GuardedModelAdmin):
-    ordering = ('name',)
-
-
+    pass
 admin.site.register(Institution, InstitutionAdmin)
 
 
 class BuildingAdmin(GuardedModelAdmin):
-    ordering = ('institution',)
-
-
+    pass
 admin.site.register(Building, BuildingAdmin)
-admin.site.register(User)
+
+
+class UserAdmin(GuardedModelAdmin):
+    pass
+admin.site.register(User, UserAdmin)
+
 admin.site.register(Category)
 admin.site.register(ObjectPurpose)
 admin.site.register(MeterType)
@@ -27,4 +28,3 @@ admin.site.register(Component)
 admin.site.register(ComponentType)
 admin.site.register(Feature)
 admin.site.register(FeatureType)
-

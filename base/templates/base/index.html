@@ -3,14 +3,19 @@
 {% block content %}
     <div class="row index-page">
         <div class="col-md-8">
-            <ul class="list-group">
+            <div class="list-group">
+            {% for inst in institutions %}
+                <a href="{% url 'institution_perms' inst.id  %}" class="list-group-item active"><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> {{ inst.name }}</a>
                 {% for build in buildings %}
-                    {% ifchanged %}
-                        <li href="#" class="list-group-item active"><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> {{ build.institution }}</li>
-                    {% endifchanged %}
-                    <li href="#" class="list-group-item"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> {{ build.name }}</li>
-                {% endfor %}
-            </ul>
+                    {% if inst.id == build.institution.id %}
+                        <a href="{% url 'building_perms' build.id  %}" class="list-group-item"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> {{ build.name }}</a>
+                    {% endif %}
+                    {% endfor%}
+            {% endfor %}
+            </div>
         </div>
+    <div class="col-md-4">
+        <a href={% url 'create_institution' %}>Створити заклад</a>
+    </div>
     </div>
 {% endblock %}

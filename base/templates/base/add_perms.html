@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <p>{{ inst.name }}</p>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Користувач</label>
+            <div class="col-sm-8">
+                <select name='u' class="form-control">
+                    {% for des in descendants %}
+                        <option value={{ des.id }}>{{ des.get_full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Право</label>
+            <div class="col-sm-8">
+                <select name='p' class="form-control">
+                    {% for per in permissions %}
+                        <option value={{ per }}>{{ per }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-1">
+                <button type="submit" class="btn btn-default">Надати право</button>
+            </div>
+        </div>
+    </form>
+    <div class="col-sm-offset-2 col-sm-8">
+        <div class="list-group">
+        <p>Права, що надані Вашим підлеглим:</p>
+            {% for item in list %}
+                <a href="#" class="list-group-item">{{ item.name.get_full_name }}</a>
+                {% for perm in item.perms %}
+                    <li href="#" class="list-group-item">{{ perm }}</li>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

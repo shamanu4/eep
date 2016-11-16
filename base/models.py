@@ -28,7 +28,7 @@ class User(AbstractUser, MPTTModel):
         return self.email
 
     def get_full_name(self):
-        return "%s %s. %s." % (self.last_name, self.first_name, self.middle_name)
+        return "%s %s %s" % (self.last_name, self.first_name, self.middle_name)
 
     def get_short_name(self):
         return self.first_name
@@ -62,7 +62,9 @@ class Institution(models.Model):
 
     class Meta:
         permissions = (
-            ('view_institution', 'View institutions'),
+            ('view_institution', 'Переглядати заклади'),
+            ('lead_institution', 'Керувати закладами'),
+            ('create_institution', 'Створювати заклади'),
         )
         verbose_name = 'Заклад, установа'
         verbose_name_plural = 'Заклади, установи'
@@ -83,7 +85,9 @@ class Building(MPTTModel):
 
     class Meta:
         permissions = (
-            ('view_buildings', 'View buildings'),
+            ('view_building', 'Переглядати будівлі'),
+            ('lead_building', 'Керувати будівлями'),
+            ('create_building', 'Створювати будівлі'),
         )
         verbose_name = 'Будівля'
         verbose_name_plural = 'Будівлі'

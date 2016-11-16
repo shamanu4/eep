@@ -1,7 +1,7 @@
 .index-page {
   margin-top: 3.5%; }
 
-li.list-group-item span {
+a.list-group-item span {
   margin-right: 2.63%; }
 
 .login-form {
@@ -12,5 +12,8 @@ li.list-group-item span {
     padding-top: 2.5%; }
     .login-form form button {
       float: right; }
+
+.list-group {
+  margin-left: -15px; }
 
 /*# sourceMappingURL=style.css.map */

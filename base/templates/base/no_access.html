@@ -1,0 +1,6 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <a href={% url 'index' %}>На головну</a>
+    <div class="alert alert-danger" role="alert">Вибачте, у Вас відсутні права на перегляд цієї сторінки...</div>
+{% endblock %}
