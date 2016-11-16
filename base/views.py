@@ -15,12 +15,17 @@ def index(request):
     user = request.user
     institutions = get_objects_for_user(user, 'base.view_institution')
     buildings = get_objects_for_user(user, 'base.view_building').order_by('institution')
+    if user.has_perm('base.create_objects'):
+        perm = True
+    else:
+        perm = False
     return render(
         request,
         'base/index.html',
         {
             'institutions': institutions,
-            'buildings': buildings
+            'buildings': buildings,
+            'perm': perm
         }
     )
 
@@ -142,6 +147,7 @@ def building_perms(request, pk):
                 elif cur_perm == 'create_objects' or cur_perm == 'delegate_permissions':
                     permission = Permission.objects.get(codename=cur_perm)
                     perm_user.user_permissions.add(permission)
+                return HttpResponseRedirect(reverse("building_perms", kwargs={'pk': build.id}))
             return render(
                 request,
                 'base/add_perms.html',
@@ -156,68 +162,63 @@ def building_perms(request, pk):
             return HttpResponseRedirect(reverse("no_permissions"))
 
 
-def create_institution(request):
+def create_object(request, type):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse("login"))
     user = request.user
     if user.has_perm('base.create_objects'):
         if request.method == 'POST':
-            form = InstitutionForm(request.POST)
+            if type == '1':
+                form = InstitutionForm(request.POST)
+            else:
+                form = BuildingForm(request.POST)
             if form.is_valid():
                 form.save()
                 name = form.cleaned_data['name']
-                inst = Institution.objects.get(name=name)
-                assign_perm('lead_institution', user, inst)
-                assign_perm('view_institution', user, inst)
-                ancestors = user.get_ancestors()
-                for ancestor in ancestors:
-                    assign_perm('lead_institution', ancestor, inst)
-                    assign_perm('view_institution', ancestor, inst)
+                if type == '1':
+                    obj = Institution.objects.get(name=name)
+                    assign_perm('lead_institution', user, obj)
+                    assign_perm('view_institution', user, obj)
+                    ancestors = user.get_ancestors()
+                    for ancestor in ancestors:
+                        assign_perm('lead_institution', ancestor, obj)
+                        assign_perm('view_institution', ancestor, obj)
+                else:
+                    obj = Building.objects.get(name=name)
+                    assign_perm('lead_building', user, obj)
+                    assign_perm('view_building', user, obj)
+                    ancestors = user.get_ancestors()
+                    for ancestor in ancestors:
+                        assign_perm('lead_building', ancestor, obj)
+                        assign_perm('view_building', ancestor, obj)
                 return HttpResponseRedirect('/')
         else:
-            form = InstitutionForm()
+            if type == '1':
+                form = InstitutionForm()
+            else:
+                form = BuildingForm()
         return render(
             request,
             'base/create_object.html',
-            {'form': form}
+            {
+                'form': form,
+                'type': type
+            }
         )
     else:
         return HttpResponseRedirect(reverse("no_permissions"))
 
 
-def create_building(request):
+def remove_perms(request, id, user_id, type):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse("login"))
-    user = request.user
-    if user.has_perm('base.create_objects'):
-        if request.method == 'POST':
-            form = BuildingForm(request.POST)
-            if form.is_valid():
-                form.save()
-                name = form.cleaned_data['name']
-                inst = Building.objects.get(name=name)
-                assign_perm('lead_building', user, inst)
-                assign_perm('lead_building', user, inst)
-                ancestors = user.get_ancestors()
-                for ancestor in ancestors:
-                    assign_perm('lead_institution', ancestor, inst)
-                    assign_perm('view_institution', ancestor, inst)
-                return HttpResponseRedirect('/')
-        else:
-            form = BuildingForm()
-        return render(
-            request,
-            'base/create_object.html',
-            {'form': form}
-        )
+    if type == '1':
+        obj = Institution.objects.get(pk=id)
+        perm = 'lead_institution'
     else:
-        return HttpResponseRedirect(reverse("no_permissions"))
-
-
-def remove_inst_perms(request, institution_id, user_id):
-        if not request.user.is_authenticated():
-            return HttpResponseRedirect(reverse("login"))
-        obj = Institution.objects.get(pk=institution_id)
+        obj = Building.objects.get(pk=id)
+        perm = 'lead_building'
+    if request.user.has_perm(perm, obj):
         user = User.objects.get(pk=user_id)
         permissions = get_perms(user, obj)
         descendants = user.get_descendants()
@@ -230,17 +231,14 @@ def remove_inst_perms(request, institution_id, user_id):
             if cur_perm == 'create_objects' or cur_perm == 'delegate_permissions':
                 permission = Permission.objects.get(codename=cur_perm)
                 user.user_permissions.remove(permission)
-            elif cur_perm == 'view_institution':
-                remove_perm('view_institution', user, obj)
+            else:
+                remove_perm(cur_perm, user, obj)
                 for des in descendants:
-                    remove_perm('view_institution', des, obj)
-            elif cur_perm == 'lead_institution':
-                remove_perm('lead_institution', user, obj)
-                remove_perm('view_institution', user, obj)
-                for des in descendants:
-                    remove_perm('lead_institution', des, obj)
-                    remove_perm('view_institution', des, obj)
-            return HttpResponseRedirect(reverse("institution_perms", kwargs={'institution_id': obj.id}))
+                    remove_perm(cur_perm, des, obj)
+            if type == '1':
+                return HttpResponseRedirect(reverse("institution_perms", kwargs={'institution_id': obj.id}))
+            else:
+                return HttpResponseRedirect(reverse("building_perms", kwargs={'pk': obj.id}))
         return render(
             request,
             'base/remove_perms.html',
@@ -250,41 +248,5 @@ def remove_inst_perms(request, institution_id, user_id):
                 'permissions': permissions
             }
         )
-
-
-def remove_build_perms(request, id, user_id):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
-    obj = Building.objects.get(pk=id)
-    user = User.objects.get(pk=user_id)
-    permissions = get_perms(user, obj)
-    descendants = user.get_descendants()
-    if user.has_perm('base.create_objects'):
-        permissions.append('create_objects')
-    if user.has_perm('base.delegate_permissions'):
-        permissions.append('delegate_permissions')
-    if request.GET.get('p'):
-        cur_perm = request.GET['p']
-        if cur_perm == 'create_objects' or cur_perm == 'delegate_permissions':
-            permission = Permission.objects.get(codename=cur_perm)
-            user.user_permissions.remove(permission)
-        elif cur_perm == 'view_building':
-            remove_perm('view_building', user, obj)
-            for des in descendants:
-                remove_perm('view_building', des, obj)
-        elif cur_perm == 'lead_building':
-            remove_perm('lead_building', user, obj)
-            remove_perm('view_building', user, obj)
-            for des in descendants:
-                remove_perm('lead_building', des, obj)
-                remove_perm('view_building', des, obj)
-        return HttpResponseRedirect(reverse("building_perms", kwargs={'pk': obj.id}))
-    return render(
-        request,
-        'base/remove_perms.html',
-        {
-            'obj': obj,
-            'user': user,
-            'permissions': permissions
-        }
-    )
+    else:
+        return HttpResponseRedirect(reverse("no_permissions"))

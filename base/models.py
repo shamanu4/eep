@@ -64,7 +64,6 @@ class Institution(models.Model):
         permissions = (
             ('view_institution', 'Переглядати заклади'),
             ('lead_institution', 'Керувати закладами'),
-            ('create_institution', 'Створювати заклади'),
         )
         verbose_name = 'Заклад, установа'
         verbose_name_plural = 'Заклади, установи'
@@ -87,7 +86,6 @@ class Building(MPTTModel):
         permissions = (
             ('view_building', 'Переглядати будівлі'),
             ('lead_building', 'Керувати будівлями'),
-            ('create_building', 'Створювати будівлі'),
         )
         verbose_name = 'Будівля'
         verbose_name_plural = 'Будівлі'

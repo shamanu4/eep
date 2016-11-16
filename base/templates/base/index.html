@@ -4,19 +4,30 @@
     <div class="row index-page">
         <div class="col-md-8">
             <div class="list-group">
-            {% for inst in institutions %}
-                <a href="{% url 'institution_perms' inst.id  %}" class="list-group-item active"><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> {{ inst.name }}</a>
-                {% for build in buildings %}
-                    {% if inst.id == build.institution.id %}
-                        <a href="{% url 'building_perms' build.id  %}" class="list-group-item"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> {{ build.name }}</a>
-                    {% endif %}
-                    {% endfor%}
-            {% endfor %}
+                {% if institutions %}
+                    {% for inst in institutions %}
+                        <a href="{% url 'institution_perms' inst.id %}" class="list-group-item active"><span
+                                class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> {{ inst.name }}</a>
+                        {% for build in buildings %}
+                            {% if inst.id == build.institution.id %}
+                                <a href="{% url 'building_perms' build.id %}" class="list-group-item"><span
+                                        class="glyphicon glyphicon-home" aria-hidden="true"></span> {{ build.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    {% for build in buildings %}
+                        <a href="{% url 'building_perms' build.id %}" class="list-group-item"><span
+                                class="glyphicon glyphicon-home" aria-hidden="true"></span> {{ build.name }}</a>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
-    <div class="col-md-4">
-        <a href={% url 'create_institution' %}>Створити заклад</a>
-        <a href={% url 'create_building' %}>Створити будівлю</a>
-    </div>
+        {% if perm %}
+            <div class="col-md-1">
+                <a href='{% url 'create_object' 1 %}' class='btn btn-primary'>Додати заклад</a>
+                <a href='{% url 'create_object' 2 %}' class='btn btn-primary'>додати будівлю</a>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

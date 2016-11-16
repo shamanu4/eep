@@ -2,9 +2,15 @@
 
 {% block content %}
     {% if inst %}
-        <p>{{ inst.name }}</p>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}">Головна</a></li>
+            <li>{{ inst.name }}</li>
+        </ol>
     {% else %}
-        <p>{{ build.name }}</p>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}">Головна</a></li>
+            <li>{{ build.name }}</li>
+        </ol>
     {% endif %}
     <form class="form-horizontal">
         <div class="form-group">
@@ -39,11 +45,11 @@
             {% for item in list %}
                 {% if item.perms|length > 0 %}
                     {% if inst %}
-                        <a href="{% url 'remove_inst_perms' inst.id item.name.id %}"
-                       class="list-group-item list-group-item-success">{{ item.name.get_full_name }}</a>
-                    {% else %}
-                        <a href="{% url 'remove_build_perms' build.id item.name.id %}"
-                       class="list-group-item list-group-item-success">{{ item.name.get_full_name }}</a>
+                        <a href="{% url 'remove_perms' inst.id item.name.id 1 %}"
+                           class="list-group-item list-group-item-success">{{ item.name.get_full_name }}</a>
+                    {% elif build %}
+                        <a href="{% url 'remove_perms' build.id item.name.id 2 %}"
+                           class="list-group-item list-group-item-success">{{ item.name.get_full_name }}</a>
                     {% endif %}
                     {% for perm in item.perms %}
                         <li href="#" class="list-group-item">{{ perm }}</li>

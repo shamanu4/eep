@@ -1,8 +1,16 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-    <p>Видалення прав підлеглого буде тут</p>
-    {{ obj.name }} {{ user.get_full_name }}
+    <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}">Головна</a></li>
+            {% if obj.square %}
+                <li><a href="{% url 'building_perms' obj.id %}">{{ obj.name }}</a></li>
+            {% else %}
+                <li><a href="{% url 'institution_perms' obj.id %}">{{ obj.name }}</a></li>
+            {% endif %}
+            <li>{{ user.get_full_name }}</li>
+        </ol>
+    <p>Видалення прав для <b>{{ user.get_full_name }}</b> на об'єкт <b>{{ obj.name }}</b></p>
     <form action="">
         <div class="form-group">
             <label class="col-sm-1 control-label">Право</label>
@@ -19,6 +27,5 @@
                 <button type="submit" class="btn btn-default">Видалити право</button>
             </div>
         </div>
-
     </form>
 {% endblock %}

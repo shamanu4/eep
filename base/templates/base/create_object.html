@@ -2,6 +2,13 @@
 {% load bootstrap3 %}
 
 {% block content %}
+    <li><a href="{% url 'index' %}">Головна</a></li>
+    {% if type == '1' %}
+        <li>Додати заклад</li>
+    {% else %}
+        <li>Додати будівлю</li>
+    {% endif %}
+    <li>{{ user.get_full_name }}</li>
     <div class="col-sm-offset-2 col-md-7">
         <form method="post">
             {% csrf_token %}
