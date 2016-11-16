@@ -1,0 +1,24 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <p>Видалення прав підлеглого буде тут</p>
+    {{ obj.name }} {{ user.get_full_name }}
+    <form action="">
+        <div class="form-group">
+            <label class="col-sm-1 control-label">Право</label>
+            <div class="col-sm-6">
+                <select name='p' class="form-control">
+                    {% for per in permissions %}
+                        <option value={{ per }}>{{ per }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-default">Видалити право</button>
+            </div>
+        </div>
+
+    </form>
+{% endblock %}

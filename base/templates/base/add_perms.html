@@ -1,7 +1,11 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-    <p>{{ inst.name }}</p>
+    {% if inst %}
+        <p>{{ inst.name }}</p>
+    {% else %}
+        <p>{{ build.name }}</p>
+    {% endif %}
     <form class="form-horizontal">
         <div class="form-group">
             <label class="col-sm-2 control-label">Користувач</label>
@@ -31,12 +35,20 @@
     </form>
     <div class="col-sm-offset-2 col-sm-8">
         <div class="list-group">
-        <p>Права, що надані Вашим підлеглим:</p>
+            <p>Права, що надані Вашим підлеглим:</p>
             {% for item in list %}
-                <a href="#" class="list-group-item">{{ item.name.get_full_name }}</a>
-                {% for perm in item.perms %}
-                    <li href="#" class="list-group-item">{{ perm }}</li>
-                {% endfor %}
+                {% if item.perms|length > 0 %}
+                    {% if inst %}
+                        <a href="{% url 'remove_inst_perms' inst.id item.name.id %}"
+                       class="list-group-item list-group-item-success">{{ item.name.get_full_name }}</a>
+                    {% else %}
+                        <a href="{% url 'remove_build_perms' build.id item.name.id %}"
+                       class="list-group-item list-group-item-success">{{ item.name.get_full_name }}</a>
+                    {% endif %}
+                    {% for perm in item.perms %}
+                        <li href="#" class="list-group-item">{{ perm }}</li>
+                    {% endfor %}
+                {% endif %}
             {% endfor %}
         </div>
     </div>
