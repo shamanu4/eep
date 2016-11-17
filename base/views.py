@@ -5,27 +5,34 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Permission
 from guardian.shortcuts import assign_perm, remove_perm, get_perms, get_objects_for_user
-from base.models import User, Institution, Building
-from base.forms import InstitutionForm, BuildingForm
+from base.models import User, Institution, Building, Component, Feature, Meter
+from base.forms import InstitutionForm, BuildingForm, ComponentTypeForm, ComponentForm, FeatureTypeForm, FeatureForm, \
+    MeterTypeForm, MeterForm
 
 
 def index(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
     user = request.user
+    if not user.is_authenticated():
+        return HttpResponseRedirect(reverse("login"))
+
     institutions = get_objects_for_user(user, 'base.view_institution')
     buildings = get_objects_for_user(user, 'base.view_building').order_by('institution')
     if user.has_perm('base.create_objects'):
-        perm = True
+        create_objects_perm = True
     else:
-        perm = False
+        create_objects_perm = False
+    if user.has_perm('base.create_components'):
+        create_components_perm = True
+    else:
+        create_components_perm = False
     return render(
         request,
         'base/index.html',
         {
             'institutions': institutions,
             'buildings': buildings,
-            'perm': perm
+            'create_objects_perm': create_objects_perm,
+            'create_components_perm': create_components_perm
         }
     )
 
@@ -69,6 +76,8 @@ def institution_perms(request, institution_id):
             permissions.append('delegate_permissions')
             if user.has_perm('base.create_objects'):
                 permissions.append('create_objects')
+            if user.has_perm('base.create_components'):
+                permissions.append('create_components')
             list = []
             for des in descendants:
                 a = get_perms(des, inst)
@@ -76,6 +85,8 @@ def institution_perms(request, institution_id):
                     a.append('create_objects')
                 if des.has_perm('base.delegate_permissions'):
                     a.append('delegate_permissions')
+                if des.has_perm('base.create_components'):
+                    a.append('create_components')
                 b = {'name': des,
                      'perms': a}
                 list.append(b)
@@ -93,7 +104,7 @@ def institution_perms(request, institution_id):
                     assign_perm('view_institution', perm_user, inst)
                     for build in builds:
                         assign_perm('view_building', perm_user, build)
-                elif cur_perm == 'create_objects' or cur_perm == 'delegate_permissions':
+                elif cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components':
                     permission = Permission.objects.get(codename=cur_perm)
                     perm_user.user_permissions.add(permission)
                 return HttpResponseRedirect(reverse("institution_perms", kwargs={'institution_id': inst.id}))
@@ -126,6 +137,8 @@ def building_perms(request, pk):
             permissions.append('delegate_permissions')
             if user.has_perm('base.create_objects'):
                 permissions.append('create_objects')
+            if user.has_perm('base.create_components'):
+                permissions.append('create_components')
             list = []
             for des in descendants:
                 a = get_perms(des, build)
@@ -133,6 +146,8 @@ def building_perms(request, pk):
                     a.append('create_objects')
                 if des.has_perm('base.delegate_permissions'):
                     a.append('delegate_permissions')
+                if des.has_perm('base.create_components'):
+                    a.append('create_components')
                 b = {'name': des,
                      'perms': a}
                 list.append(b)
@@ -144,7 +159,7 @@ def building_perms(request, pk):
                     assign_perm('lead_building', perm_user, build)
                 if cur_perm == 'view_building':
                     assign_perm('view_building', perm_user, build)
-                elif cur_perm == 'create_objects' or cur_perm == 'delegate_permissions':
+                elif cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components':
                     permission = Permission.objects.get(codename=cur_perm)
                     perm_user.user_permissions.add(permission)
                 return HttpResponseRedirect(reverse("building_perms", kwargs={'pk': build.id}))
@@ -167,16 +182,16 @@ def create_object(request, type):
         return HttpResponseRedirect(reverse("login"))
     user = request.user
     if user.has_perm('base.create_objects'):
+        institutions = get_objects_for_user(user, 'base.view_institution')
         if request.method == 'POST':
             if type == '1':
                 form = InstitutionForm(request.POST)
             else:
-                form = BuildingForm(request.POST)
+                form = BuildingForm(institutions, request.POST)
             if form.is_valid():
                 form.save()
                 name = form.cleaned_data['name']
                 if type == '1':
-                    print(form['id'])
                     obj = Institution.objects.get(name=name)
                     assign_perm('lead_institution', user, obj)
                     assign_perm('view_institution', user, obj)
@@ -198,7 +213,7 @@ def create_object(request, type):
             if type == '1':
                 form = InstitutionForm()
             else:
-                form = BuildingForm()
+                form = BuildingForm(institutions)
         return render(
             request,
             'base/create_object.html',
@@ -228,9 +243,11 @@ def remove_perms(request, id, user_id, type):
             permissions.append('create_objects')
         if user.has_perm('base.delegate_permissions'):
             permissions.append('delegate_permissions')
+        if user.has_perm('base.create_components'):
+            permissions.append('create_components')
         if request.GET.get('p'):
             cur_perm = request.GET['p']
-            if cur_perm == 'create_objects' or cur_perm == 'delegate_permissions':
+            if cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components':
                 permission = Permission.objects.get(codename=cur_perm)
                 user.user_permissions.remove(permission)
                 for des in descendants:
@@ -262,23 +279,124 @@ def edit_object(request, id, type):
         return HttpResponseRedirect(reverse("login"))
     if type == '1':
         obj = Institution.objects.get(pk=id)
+        form = InstitutionForm(request.POST or None, instance=obj)
+        if user.has_perm('lead_institution', obj):
+            if request.method == 'POST':
+                form.save()
+                return HttpResponseRedirect(reverse("index"))
+            return render(
+                request,
+                'base/edit_object.html',
+                {
+                    'form': form,
+                    "obj": obj
+                }
+            )
     else:
-        obj = Building.objects.get(pk=id)
-    if user.has_perm('lead_institution', obj):
-        if type == '1':
-            form = InstitutionForm(request.POST or None, instance=obj)
+        if type == '2':
+            obj = Building.objects.get(pk=id)
+        elif type == '3':
+            obj = Feature.objects.get(pk=id)
         else:
-            form = BuildingForm(request.POST or None, instance=obj)
+            obj = Meter.objects.get(pk=id)
+        if user.has_perm('lead_building', obj):
+            institutions = get_objects_for_user(user, 'base.view_institution')
+            buildings = get_objects_for_user(user, 'base.view_building').order_by('institution')
+            if type == '2':
+                form = BuildingForm(institutions, request.POST or None, instance=obj)
+            elif type == '3':
+                form = FeatureForm(request.POST or None, instance=obj)
+            else:
+                form = MeterForm(institutions, buildings, request.POST or None, instance=obj)
+            if request.method == 'POST':
+                form.save()
+                return HttpResponseRedirect(reverse("index"))
+            return render(
+                request,
+                'base/edit_object.html',
+                {
+                    'form': form,
+                    "obj": obj
+                }
+            )
+        else:
+            return HttpResponseRedirect(reverse("no_permissions"))
+
+
+def view_object(request, id):
+    user = request.user
+    if not user.is_authenticated():
+        return HttpResponseRedirect(reverse("login"))
+    try:
+        obj = Building.objects.get(pk=id)
+
+    except Building.DoesNotExist:
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        if user.has_perm('view_building', obj):
+            comps = Component.objects.filter(building=obj.id)
+            features_list = []
+            for comp in comps:
+                features = Feature.objects.filter(component_id=comp.id)
+                for feature in features:
+                    features_list.append(feature)
+            meters = Meter.objects.filter(building_id=obj.id)
+            return render(
+                request,
+                'base/view_object.html',
+                {
+                    'obj': obj,
+                    'comps': comps,
+                    'features_list': features_list,
+                    'meters': meters
+                }
+            )
+        else:
+            return HttpResponseRedirect(reverse("no_permissions"))
+
+
+def create_comp_or_feature(request, type):
+    user = request.user
+    if not user.is_authenticated():
+        return HttpResponseRedirect(reverse("login"))
+    if user.has_perm('base.create_components'):
+        buildings = get_objects_for_user(user, 'base.lead_building')
+        institutions = get_objects_for_user(user, 'base.view_institution')
         if request.method == 'POST':
+            if type == '3':
+                form = ComponentTypeForm(request.POST)
+            elif type == '4':
+                form = ComponentForm(buildings, request.POST)
+            elif type == '5':
+                form = FeatureTypeForm(request.POST)
+            elif type == '6':
+                form = FeatureForm(request.POST)
+            elif type == '7':
+                form = MeterTypeForm(request.POST)
+            else:
+                form = MeterForm(institutions, buildings, request.POST)
             form.save()
             return HttpResponseRedirect(reverse("index"))
+        else:
+            if type == '3':
+                form = ComponentTypeForm()
+            elif type == '4':
+
+                form = ComponentForm(buildings)
+            elif type == '5':
+                form = FeatureTypeForm()
+            elif type == '6':
+                form = FeatureForm()
+            elif type == '7':
+                form = MeterTypeForm()
+            else:
+                form = MeterForm(institutions, buildings)
         return render(
             request,
-            'base/edit_object.html',
+            'base/create_object.html',
             {
-                'form': form,
-                "obj": obj
-            }
-        )
+                'type': type,
+                'form': form
+            })
     else:
         return HttpResponseRedirect(reverse("no_permissions"))

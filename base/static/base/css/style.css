@@ -1,5 +1,5 @@
 .index-page {
-  margin-top: 3.5%; }
+  margin-top: 1.5%; }
 
 .login-form {
   height: auto;
@@ -19,22 +19,24 @@
 .list-group-item:hover > .permissions {
   opacity: 1;
   transition-duration: 0.3s;
-  color: #337AB7; }
-.list-group-item.active a.edit-object {
-  color: #FFFFFF;
-  text-decoration: none; }
+  color: #3C763D; }
 .list-group-item a.edit-object {
-  text-decoration: none; }
+  text-decoration: none;
+  color: #333333; }
+.list-group-item a:not(.edit-object) {
+  margin-left: 1%; }
+  .list-group-item a:not(.edit-object) span {
+    font-size: 1.25em; }
 .list-group-item.active:hover > .permissions {
   opacity: 1;
-  color: #FFFFFF;
   transition-duration: 0.3s; }
-.list-group-item span {
+.list-group-item .glyphicon {
   margin-right: 2.63%; }
 .list-group-item .glyphicon-home {
-  color: #337AB7; }
+  color: #3C763D; }
 
 .sub-item > span {
-  margin-left: 3%; }
+  margin-left: 3%;
+  color: #333333; }
 
 /*# sourceMappingURL=style.css.map */

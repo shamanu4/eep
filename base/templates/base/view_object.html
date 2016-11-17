@@ -1,0 +1,76 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'index' %}">На головну</a></li>
+        <li>{{ obj.name }}</li>
+    </ol>
+    <div class="col-md-10 col-md-offset-1">
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-success"><b>Заклад: </b>{{ obj.name }}</li>
+            <li class="list-group-item"><b>Заклад: </b>{{ obj.institution }}</li>
+            <li class="list-group-item"><b>Площа: </b>{{ obj.square }}</li>
+            <li class="list-group-item"><b>Категорія: </b>{{ obj.category }}</li>
+            <li class="list-group-item"><b>Призначення: </b>{% if obj.purpose.name == base.ObjectPurpose.None %}
+                {{ obj.purpose.name }} {% else %} - {% endif %}</li>
+            </li>
+            <li class="list-group-item"><b>Дата здачі в експлуатацію: </b>{{ obj.date_from }}</li>
+            <li class="list-group-item"><b>Орендодавець: </b>{% if obj.parent %}{{ obj.parent }} {% else %}
+                - {% endif %}</li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {% if features_list %}
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-success">Характеристики:</li>
+                </ul>
+                {% for feature in features_list %}
+                    <ul class="list-group">
+                        <li class="list-group-item"><b>Компонент: </b>{{ feature.component }} <a
+                                href="{% url 'edit_object' feature.id 3 %}" class="pull-right"><span
+                                class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
+                        <li class="list-group-item"><b>Тип характеристики: </b>{{ feature.feature_type }}</li>
+                        <li class="list-group-item"><b>Відсоток від загальної кількості: </b>{{ feature.percentage }}
+                        </li>
+                        <li class="list-group-item"><b>Від: </b>{{ feature.date_from }}</li>
+                        <li class="list-group-item"><b>До: </b>{{ feature.date_until }}</li>
+                    </ul>
+                {% endfor %}
+            {% else %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        Компоненти відсутні
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            {% if meters %}
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-success">Лічильники:<a
+                                href="{% url 'create_comp_or_feature' 8 %}" class="pull-right"><span
+                                class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></li>
+                </ul>
+                {% for meter in meters %}
+                    <ul class="list-group">
+                        <li class="list-group-item"><b>Ідентифікатор лічильника: </b>{{ meter.name }}<a
+                                href="{% url 'edit_object' meter.id 4 %}" class="pull-right"><span
+                                class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
+                        <li class="list-group-item"><b>Заклад: </b>{{ meter.institution }}</li>
+                        <li class="list-group-item"><b>Будівля: </b>{{ meter.building }}</li>
+                        <li class="list-group-item"><b>Тип лічильника: </b>{{ meter.meter_type }}</li>
+                        <li class="list-group-item"><b>Орендодавець: </b>{{ meter.parent }}</li>
+                    </ul>
+                {% endfor %}
+            {% else %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        Лічильники відсутні
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

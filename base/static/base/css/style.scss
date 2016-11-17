@@ -1,9 +1,9 @@
 $black: #333333;
-$blue: #337AB7;
+$green: #3C763D;
 $white: #FFFFFF;
 
 .index-page {
-  margin-top: 3.5%
+  margin-top: 1.5%
 }
 
 .login-form {
@@ -30,29 +30,32 @@ $white: #FFFFFF;
   &:hover > .permissions {
     opacity: 1;
     transition-duration: 0.3s;
-    color: $blue;
-  }
-  &.active a.edit-object {
-    color: $white;
-    text-decoration: none;
+    color: $green;
   }
   a.edit-object {
     text-decoration: none;
+    color: $black;
+  }
+  a:not(.edit-object) {
+    margin-left: 1%;
+    span {
+      font-size: 1.25em;
+    }
   }
   &.active:hover > .permissions {
     opacity: 1;
-    color: $white;
     transition-duration: 0.3s;
 
   }
-  span {
+  .glyphicon {
     margin-right: 2.63%
   }
   .glyphicon-home {
-    color: $blue;
+    color: $green;
   }
 }
 
 .sub-item > span {
-  margin-left: 3%
+  margin-left: 3%;
+  color: $black
 }
