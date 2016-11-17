@@ -182,7 +182,7 @@ def create_object(request, type):
         return HttpResponseRedirect(reverse("login"))
     user = request.user
     if user.has_perm('base.create_objects'):
-        institutions = get_objects_for_user(user, 'base.view_institution')
+        institutions = get_objects_for_user(user, 'base.lead_institution')
         if request.method == 'POST':
             if type == '1':
                 form = InstitutionForm(request.POST)
@@ -300,8 +300,8 @@ def edit_object(request, id, type):
         else:
             obj = Meter.objects.get(pk=id)
         if user.has_perm('lead_building', obj):
-            institutions = get_objects_for_user(user, 'base.view_institution')
-            buildings = get_objects_for_user(user, 'base.view_building').order_by('institution')
+            institutions = get_objects_for_user(user, 'base.lead_institution')
+            buildings = get_objects_for_user(user, 'base.lead_building').order_by('institution')
             if type == '2':
                 form = BuildingForm(institutions, request.POST or None, instance=obj)
             elif type == '3':
@@ -361,7 +361,7 @@ def create_comp_or_feature(request, type):
         return HttpResponseRedirect(reverse("login"))
     if user.has_perm('base.create_components'):
         buildings = get_objects_for_user(user, 'base.lead_building')
-        institutions = get_objects_for_user(user, 'base.view_institution')
+        institutions = get_objects_for_user(user, 'base.lead_institution')
         if request.method == 'POST':
             if type == '3':
                 form = ComponentTypeForm(request.POST)

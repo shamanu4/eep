@@ -23,7 +23,9 @@
         <div class="col-md-6">
             {% if features_list %}
                 <ul class="list-group">
-                    <li class="list-group-item list-group-item-success">Характеристики:</li>
+                    <li class="list-group-item list-group-item-success">Характеристики:<a
+                                href="{% url 'create_comp_or_feature' 6 %}" class="pull-right"><span
+                                class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></li>
                 </ul>
                 {% for feature in features_list %}
                     <ul class="list-group">
@@ -41,6 +43,9 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         Компоненти відсутні
+                        <a
+                                href="{% url 'create_comp_or_feature' 6 %}" class="pull-right"><span
+                                class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                     </div>
                 </div>
             {% endif %}
@@ -67,6 +72,9 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         Лічильники відсутні
+                        <a
+                                href="{% url 'create_comp_or_feature' 8 %}" class="pull-right"><span
+                                class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                     </div>
                 </div>
             {% endif %}

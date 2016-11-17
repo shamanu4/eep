@@ -26,7 +26,16 @@
             <li><a href='{% url 'create_comp_or_feature' 6 %}'>Додати характеристику</a></li>
         </ul>
     </div>
-        <a href='{% url 'create_comp_or_feature' 7 %}' class="btn btn-default">Тип лічильника</a>
+        <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+            Лічильники <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href='{% url 'create_comp_or_feature' 7 %}'>Додати тип лічильника</a></li>
+            <li><a href='{% url 'create_comp_or_feature' 8 %}'>Додати лічильник</a></li>
+        </ul>
+    </div>
     {% endif %}
     <div class="row index-page">
         <div class="col-md-8 col-md-offset-1">
