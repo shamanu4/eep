@@ -176,6 +176,7 @@ def create_object(request, type):
                 form.save()
                 name = form.cleaned_data['name']
                 if type == '1':
+                    print(form['id'])
                     obj = Institution.objects.get(name=name)
                     assign_perm('lead_institution', user, obj)
                     assign_perm('view_institution', user, obj)
@@ -184,7 +185,8 @@ def create_object(request, type):
                         assign_perm('lead_institution', ancestor, obj)
                         assign_perm('view_institution', ancestor, obj)
                 else:
-                    obj = Building.objects.get(name=name)
+                    institution = form.cleaned_data['institution']
+                    obj = Building.objects.get(name=name, institution=institution)
                     assign_perm('lead_building', user, obj)
                     assign_perm('view_building', user, obj)
                     ancestors = user.get_ancestors()
@@ -231,6 +233,8 @@ def remove_perms(request, id, user_id, type):
             if cur_perm == 'create_objects' or cur_perm == 'delegate_permissions':
                 permission = Permission.objects.get(codename=cur_perm)
                 user.user_permissions.remove(permission)
+                for des in descendants:
+                    des.user_permissions.remove(permission)
             else:
                 remove_perm(cur_perm, user, obj)
                 for des in descendants:
@@ -246,6 +250,34 @@ def remove_perms(request, id, user_id, type):
                 'obj': obj,
                 'user': user,
                 'permissions': permissions
+            }
+        )
+    else:
+        return HttpResponseRedirect(reverse("no_permissions"))
+
+
+def edit_object(request, id, type):
+    user = request.user
+    if not user.is_authenticated():
+        return HttpResponseRedirect(reverse("login"))
+    if type == '1':
+        obj = Institution.objects.get(pk=id)
+    else:
+        obj = Building.objects.get(pk=id)
+    if user.has_perm('lead_institution', obj):
+        if type == '1':
+            form = InstitutionForm(request.POST or None, instance=obj)
+        else:
+            form = BuildingForm(request.POST or None, instance=obj)
+        if request.method == 'POST':
+            form.save()
+            return HttpResponseRedirect(reverse("index"))
+        return render(
+            request,
+            'base/edit_object.html',
+            {
+                'form': form,
+                "obj": obj
             }
         )
     else:

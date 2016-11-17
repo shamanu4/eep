@@ -1,33 +1,52 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
+    <ol class="breadcrumb">
+        <li>Головна</li>
+        {% if perm %}
+            <li><a href='{% url 'create_object' 1 %}'>Додати заклад</a></li>
+            <li><a href='{% url 'create_object' 2 %}'>Додати будівлю</a></li>
+        {% endif %}
+
+    </ol>
     <div class="row index-page">
         <div class="col-md-8">
-            <div class="list-group">
+            <ul class="list-group">
                 {% if institutions %}
                     {% for inst in institutions %}
-                        <a href="{% url 'institution_perms' inst.id %}" class="list-group-item active"><span
-                                class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> {{ inst.name }}</a>
+                        <li class="list-group-item active"><span
+                                class="glyphicon glyphicon-briefcase" aria-hidden="true"></span><a
+                                href="{% url 'edit_object' inst.id 1 %}" class="edit-object">{{ inst.name }}</a><a
+                                href="{% url 'institution_perms' inst.id %}" class="permissions pull-right"><span
+                                class="glyphicon glyphicon-user"></span></a></li>
                         {% for build in buildings %}
                             {% if inst.id == build.institution.id %}
-                                <a href="{% url 'building_perms' build.id %}" class="list-group-item"><span
-                                        class="glyphicon glyphicon-home" aria-hidden="true"></span> {{ build.name }}</a>
+                                <li class="list-group-item sub-item"><span
+                                        class="glyphicon glyphicon-home" aria-hidden="true"></span> <a
+                                        href="{% url 'edit_object' build.id 2 %}"
+                                        class="edit-object">{{ build.name }}</a><a
+                                        href="{% url 'building_perms' build.id %}" class="permissions pull-right"><span
+                                        class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
                             {% endif %}
                         {% endfor %}
                     {% endfor %}
                 {% else %}
                     {% for build in buildings %}
-                        <a href="{% url 'building_perms' build.id %}" class="list-group-item"><span
-                                class="glyphicon glyphicon-home" aria-hidden="true"></span> {{ build.name }}</a>
+                        {% ifchanged %}
+                            <li class="list-group-item active"><span
+                                    class="glyphicon glyphicon-briefcase"
+                                    aria-hidden="true"></span>{{ build.institution }}</li>
+                        {% endifchanged %}
+                        <li class="list-group-item sub-item"><span
+                                class="glyphicon glyphicon-home" aria-hidden="true"></span> <a
+                                href="{% url 'edit_object' build.id 2 %}"
+                                class="edit-object">{{ build.name }}</a><a
+                                href="{% url 'building_perms' build.id %}" class="permissions pull-right"><span
+                                class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
                     {% endfor %}
                 {% endif %}
-            </div>
+            </ul>
         </div>
-        {% if perm %}
-            <div class="col-md-1">
-                <a href='{% url 'create_object' 1 %}' class='btn btn-primary'>Додати заклад</a>
-                <a href='{% url 'create_object' 2 %}' class='btn btn-primary'>додати будівлю</a>
-            </div>
-        {% endif %}
+
     </div>
 {% endblock %}

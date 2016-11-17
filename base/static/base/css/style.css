@@ -1,9 +1,6 @@
 .index-page {
   margin-top: 3.5%; }
 
-a.list-group-item span {
-  margin-right: 2.63%; }
-
 .login-form {
   height: auto;
   margin: 0 auto;
@@ -15,5 +12,29 @@ a.list-group-item span {
 
 .list-group {
   margin-left: -15px; }
+
+.list-group-item .permissions {
+  opacity: 0;
+  transition-duration: 0.3s; }
+.list-group-item:hover > .permissions {
+  opacity: 1;
+  transition-duration: 0.3s;
+  color: #337AB7; }
+.list-group-item.active a.edit-object {
+  color: #FFFFFF;
+  text-decoration: none; }
+.list-group-item a.edit-object {
+  text-decoration: none; }
+.list-group-item.active:hover > .permissions {
+  opacity: 1;
+  color: #FFFFFF;
+  transition-duration: 0.3s; }
+.list-group-item span {
+  margin-right: 2.63%; }
+.list-group-item .glyphicon-home {
+  color: #337AB7; }
+
+.sub-item > span {
+  margin-left: 3%; }
 
 /*# sourceMappingURL=style.css.map */

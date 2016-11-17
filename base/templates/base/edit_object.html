@@ -4,22 +4,17 @@
 {% block content %}
     <ol class="breadcrumb">
         <li><a href="{% url 'index' %}">Головна</a></li>
-        {% if type == '1' %}
-            <li>Додати заклад</li>
-        {% else %}
-            <li>Додати будівлю</li>
-        {% endif %}
+        <li>{{ obj.name }}</li>
     </ol>
-    <div class="col-sm-offset-2 col-md-7">
+    <div class="col-sm-7 col-md-offset-2">
         <form method="post">
             {% csrf_token %}
             {% bootstrap_form form %}
             {% buttons %}
                 <button type="submit" class="btn btn-primary">
-                    Додати
+                    Відредагувати
                 </button>
             {% endbuttons %}
         </form>
     </div>
-
 {% endblock %}

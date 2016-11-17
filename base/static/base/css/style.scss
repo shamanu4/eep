@@ -1,9 +1,9 @@
+$black: #333333;
+$blue: #337AB7;
+$white: #FFFFFF;
+
 .index-page {
   margin-top: 3.5%
-}
-
-a.list-group-item span {
-  margin-right: 2.63%
 }
 
 .login-form {
@@ -20,4 +20,39 @@ a.list-group-item span {
 
 .list-group {
   margin-left: -15px;
+}
+
+.list-group-item {
+  .permissions {
+    opacity: 0;
+    transition-duration: 0.3s;
+  }
+  &:hover > .permissions {
+    opacity: 1;
+    transition-duration: 0.3s;
+    color: $blue;
+  }
+  &.active a.edit-object {
+    color: $white;
+    text-decoration: none;
+  }
+  a.edit-object {
+    text-decoration: none;
+  }
+  &.active:hover > .permissions {
+    opacity: 1;
+    color: $white;
+    transition-duration: 0.3s;
+
+  }
+  span {
+    margin-right: 2.63%
+  }
+  .glyphicon-home {
+    color: $blue;
+  }
+}
+
+.sub-item > span {
+  margin-left: 3%
 }
