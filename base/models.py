@@ -182,7 +182,7 @@ class ComponentType(models.Model):
 
 
 class Component(models.Model):
-    building = models.ForeignKey(Building, verbose_name='Будівля')
+    building = models.ForeignKey(Building, verbose_name='Заклад')
     type = models.ForeignKey(ComponentType, verbose_name='Тип')
     quantity = models.DecimalField('Кількість', max_digits=1000, decimal_places=2)
 

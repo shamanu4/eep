@@ -1,16 +1,6 @@
 $black: #333333;
-$green: #3C763D;
 $white: #FFFFFF;
-
-@mixin span-style($color) {
-  opacity: 1;
-  color: $color;
-  transition-duration: 0.3s;
-}
-
-.index-page {
-  margin-top: 1.5%
-}
+$blue: #337AB7;
 
 .login-form {
   height: auto;
@@ -25,17 +15,17 @@ $white: #FFFFFF;
 }
 
 .list-group {
-  .edit-item, .permissions {
+  .glyphicon-edit {
     opacity: 0;
     transition-duration: 0.3s;
-    margin-left: 1%
+    margin-left: 1%;
+    color: $blue
   }
-  &:hover > .list-group-item .edit-item {
-    @include span-style($black)
+  &:hover .glyphicon-edit {
+    opacity: 1;
   }
-  .list-group-item:hover > .permissions {
-    @include span-style($green);
-    margin-left: 1%
+  .active a {
+    color: $white
   }
   .glyphicon {
     margin-right: 2.63%;
@@ -48,9 +38,4 @@ $white: #FFFFFF;
     text-decoration: none;
     color: $black
   }
-}
-
-.sub-item > span {
-  margin-left: 3%;
-  color: $black
 }

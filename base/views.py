@@ -182,6 +182,51 @@ def delegate_perms(request, id, type):
         return HttpResponseRedirect(reverse("no_permissions"))
 
 
+def remove_perms(request, id, user_id, type):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect(reverse("login"))
+    if type == '1':
+        obj = Institution.objects.get(pk=id)
+        perm = 'lead_institution'
+    else:
+        obj = Building.objects.get(pk=id)
+        perm = 'lead_building'
+    if request.user.has_perm(perm, obj):
+        user = User.objects.get(pk=user_id)
+        permissions = get_perms(user, obj)
+        descendants = user.get_descendants()
+        if user.has_perm('base.create_objects'):
+            permissions.append('create_objects')
+        if user.has_perm('base.delegate_permissions'):
+            permissions.append('delegate_permissions')
+        if user.has_perm('base.create_components'):
+            permissions.append('create_components')
+        if request.GET.get('p'):
+            cur_perm = request.GET['p']
+            if cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components':
+                permission = Permission.objects.get(codename=cur_perm)
+                user.user_permissions.remove(permission)
+                for des in descendants:
+                    des.user_permissions.remove(permission)
+            else:
+                remove_perm(cur_perm, user, obj)
+                for des in descendants:
+                    remove_perm(cur_perm, des, obj)
+            return HttpResponseRedirect(reverse("delegate_perms", kwargs={'id': obj.id, 'type': type}))
+        return render(
+            request,
+            'base/remove_perms.html',
+            {
+                'obj': obj,
+                'user': user,
+                'permissions': permissions,
+                'type': type
+            }
+        )
+    else:
+        return HttpResponseRedirect(reverse("no_permissions"))
+
+
 def create_object(request, type):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse("login"))
@@ -231,51 +276,6 @@ def create_object(request, type):
         return HttpResponseRedirect(reverse("no_permissions"))
 
 
-def remove_perms(request, id, user_id, type):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
-    if type == '1':
-        obj = Institution.objects.get(pk=id)
-        perm = 'lead_institution'
-    else:
-        obj = Building.objects.get(pk=id)
-        perm = 'lead_building'
-    if request.user.has_perm(perm, obj):
-        user = User.objects.get(pk=user_id)
-        permissions = get_perms(user, obj)
-        descendants = user.get_descendants()
-        if user.has_perm('base.create_objects'):
-            permissions.append('create_objects')
-        if user.has_perm('base.delegate_permissions'):
-            permissions.append('delegate_permissions')
-        if user.has_perm('base.create_components'):
-            permissions.append('create_components')
-        if request.GET.get('p'):
-            cur_perm = request.GET['p']
-            if cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components':
-                permission = Permission.objects.get(codename=cur_perm)
-                user.user_permissions.remove(permission)
-                for des in descendants:
-                    des.user_permissions.remove(permission)
-            else:
-                remove_perm(cur_perm, user, obj)
-                for des in descendants:
-                    remove_perm(cur_perm, des, obj)
-            return HttpResponseRedirect(reverse("delegate_perms", kwargs={'id': obj.id, 'type': type}))
-        return render(
-            request,
-            'base/remove_perms.html',
-            {
-                'obj': obj,
-                'user': user,
-                'permissions': permissions,
-                'type': type
-            }
-        )
-    else:
-        return HttpResponseRedirect(reverse("no_permissions"))
-
-
 def edit_object(request, obj_id, id, type):
     user = request.user
     if not user.is_authenticated():
@@ -310,17 +310,16 @@ def edit_object(request, obj_id, id, type):
         if user.has_perm('lead_building', perm_obj):
             institutions = get_objects_for_user(user, 'base.lead_institution')
             buildings = get_objects_for_user(user, 'base.lead_building').order_by('institution')
+            components = Component.objects.filter(building_id=obj_id)
             if type == '2':
                 form = BuildingForm(institutions, request.POST or None, instance=obj)
             elif type == '3':
-                form = FeatureForm(request.POST or None, instance=obj)
+                form = FeatureForm(components, request.POST or None, instance=obj)
             elif type == '4':
                 form = MeterForm(institutions, buildings, request.POST or None, instance=obj)
             else:
                 form = ComponentForm(buildings, request.POST or None, instance=obj)
             if request.method == 'POST':
-                # if type == '5':
-                #     form = MeterDataForm(request.POST)
                 form.save()
                 return HttpResponseRedirect(reverse("index"))
 
@@ -341,21 +340,13 @@ def create_item(request, type):
     if not user.is_authenticated():
         return HttpResponseRedirect(reverse("login"))
     if user.has_perm('base.create_components'):
-        buildings = get_objects_for_user(user, 'base.lead_building')
-        institutions = get_objects_for_user(user, 'base.lead_institution')
         if request.method == 'POST':
             if type == '3':
                 form = ComponentTypeForm(request.POST)
             elif type == '4':
-                form = ComponentForm(buildings, request.POST)
-            elif type == '5':
                 form = FeatureTypeForm(request.POST)
-            elif type == '6':
-                form = FeatureForm(request.POST)
-            elif type == '7':
+            elif type == '5':
                 form = MeterTypeForm(request.POST)
-            elif type == '8':
-                form = MeterForm(institutions, buildings, request.POST)
             else:
                 form = RateForm(request.POST)
             form.save()
@@ -364,15 +355,9 @@ def create_item(request, type):
             if type == '3':
                 form = ComponentTypeForm()
             elif type == '4':
-                form = ComponentForm(buildings)
-            elif type == '5':
                 form = FeatureTypeForm()
-            elif type == '6':
-                form = FeatureForm()
-            elif type == '7':
+            elif type == '5':
                 form = MeterTypeForm()
-            elif type == '8':
-                form = MeterForm(institutions, buildings)
             else:
                 form = RateForm()
         return render(
@@ -392,22 +377,36 @@ def create_item_for_object(request, type, id):
         return HttpResponseRedirect(reverse("login"))
     obj = Building.objects.get(id=id)
     if user.has_perm('lead_building', obj):
-        # buildings = get_objects_for_user(user, 'base.lead_building')
-        # institutions = get_objects_for_user(user, 'base.lead_institution')
-        # values = buildings.values_list('id')
         meter = Meter.objects.filter(building_id=obj.id)
         inst = Institution.objects.filter(id=obj.institution_id)
-        obj = Building.objects.filter(id=id)
+        build = Building.objects.filter(id=id)
+        components = Component.objects.filter(building_id=obj.id)
         if request.method == 'POST':
             if type == '1':
                 form = MeterDataForm(meter, request.POST)
+            elif type == '2':
+                form = ReceiptForm(inst, build, request.POST)
+            elif type == '3' :
+                form = ComponentForm(build, request.POST)
+            elif type == '4':
+                form = FeatureForm(components, request.POST)
+            elif type == '5':
+                form = MeterForm(inst, build, request.POST)
             else:
-                form = ReceiptForm(inst, obj, request.POST)
+                pass
         else:
             if type == '1':
                 form = MeterDataForm(meter)
+            elif type == '2':
+                form = ReceiptForm(inst, build)
+            elif type == '3':
+                form = ComponentForm(build)
+            elif type == '4':
+                form = FeatureForm(components)
+            elif type == '5':
+                form = MeterForm(inst, build)
             else:
-                form = ReceiptForm(inst, obj)
+                pass
         return render(
             request,
             'base/create_object.html',

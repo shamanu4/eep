@@ -1,3 +1,4 @@
+# from bootstrap3_datetime.widgets import DateTimePicker
 from django import forms
 from base.models import Institution, Building, Component, ComponentType, FeatureType, Feature, MeterType, Meter, \
     MeterData, Rate, Receipt
@@ -15,6 +16,7 @@ class BuildingForm(forms.ModelForm):
         self.fields['institution'] = forms.ModelChoiceField(
             queryset=institutions, label='Заклад'
         )
+    # date_from = forms.DateField(widget=DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
 
     class Meta:
         model = Building
@@ -22,10 +24,10 @@ class BuildingForm(forms.ModelForm):
 
 
 class ComponentForm(forms.ModelForm):
-    def __init__(self, buildings, *args, **kwargs):
+    def __init__(self, building, *args, **kwargs):
         super(ComponentForm, self).__init__(*args, **kwargs)
         self.fields['building'] = forms.ModelChoiceField(
-            queryset=buildings, label='Будівля'
+            queryset=building, label='Будівля', empty_label=None
         )
 
     class Meta:
@@ -46,6 +48,12 @@ class FeatureTypeForm(forms.ModelForm):
 
 
 class FeatureForm(forms.ModelForm):
+    def __init__(self, component, *args, **kwargs):
+        super(FeatureForm, self).__init__(*args, **kwargs)
+        self.fields['component'] = forms.ModelChoiceField(
+            queryset=component, label='Компонент', empty_label=None
+        )
+
     class Meta:
         model = Feature
         fields = '__all__'
@@ -61,10 +69,10 @@ class MeterForm(forms.ModelForm):
     def __init__(self, institutions, buildings, *args, **kwargs):
         super(MeterForm, self).__init__(*args, **kwargs)
         self.fields['institution'] = forms.ModelChoiceField(
-            queryset=institutions, label='Заклад'
+            queryset=institutions, label='Заклад', empty_label=None
         )
         self.fields['building'] = forms.ModelChoiceField(
-            queryset=buildings, label='Будівля'
+            queryset=buildings, label='Будівля', empty_label=None
         )
 
     class Meta:
