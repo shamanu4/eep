@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^create_object_type_(?P<type>\d+)', create_object, name='create_object'),
     url(r'^no_access/$', no_permissions, name='no_permissions'),
     url(r'^remove_object_(?P<id>\d+)_user_(?P<user_id>\d+)_type_(?P<type>\d+)/$', remove_perms, name='remove_perms'),
-    url(r'^edit_object_(?P<id>\d+)_type_(?P<type>\d+)', edit_object, name='edit_object'),
+    url(r'^edit_object_(?P<obj_id>\d+)_comp_(?P<id>\d+)_type_(?P<type>\d+)', edit_object, name='edit_object'),
     url(r'^view_object_(?P<id>\d+)', view_object, name='view_object'),
     url(r'^create_comp_or_feature_type_(?P<type>\d+)', create_comp_or_feature, name='create_comp_or_feature'),
 

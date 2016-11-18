@@ -34,54 +34,19 @@
         <ul class="dropdown-menu">
             <li><a href='{% url 'create_comp_or_feature' 7 %}'>Додати тип лічильника</a></li>
             <li><a href='{% url 'create_comp_or_feature' 8 %}'>Додати лічильник</a></li>
+            <li><a href='{% url 'create_comp_or_feature' 9 %}'>Додати показник лічильника</a></li>
         </ul>
     </div>
     {% endif %}
     <div class="row index-page">
         <div class="col-md-8 col-md-offset-1">
             <ul class="list-group">
-{#                {% if institutions %}#}
-{#                    {% for inst in institutions %}#}
-{#                        <li class="list-group-item list-group-item-success"><span#}
-{#                                class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>{{ inst.name }}#}
-{#                            <a#}
-{#                                    href="{% url 'edit_object' inst.id 1 %}" class="permissions pull-right"><span#}
-{#                                    class="glyphicon glyphicon-edit"></span>#}
-{#                            </a>#}
-{#                            <a#}
-{#                                    href="{% url 'institution_perms' inst.id %}" class="permissions pull-right"><span#}
-{#                                    class="glyphicon glyphicon-user"></span>#}
-{#                            </a>#}
-{#                        </li>#}
-{#                        {% for build in buildings %}#}
-{#                            {% if inst.id == build.institution.id %}#}
-{#                                <li class="list-group-item sub-item"><span#}
-{#                                        class="glyphicon glyphicon-home" aria-hidden="true"></span>#}
-{#                                    <a#}
-{#                                            href="{% url 'view_object' build.id %}"#}
-{#                                            class="edit-object">{{ build.name }}#}
-{#                                    </a>#}
-{#                                    <a#}
-{#                                            href="{% url 'edit_object' build.id 2 %}"#}
-{#                                            class="permissions pull-right"><span#}
-{#                                            class="glyphicon glyphicon-edit" aria-hidden="true"></span>#}
-{#                                    </a>#}
-{#                                    <a#}
-{#                                            href="{% url 'building_perms' build.id %}"#}
-{#                                            class="permissions pull-right"><span#}
-{#                                            class="glyphicon glyphicon-user" aria-hidden="true"></span>#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                            {% endif %}#}
-{#                        {% endfor %}#}
-{#                    {% endfor %}#}
-{#                {% else %}#}
                     {% for build in buildings %}
                         {% ifchanged %}
                             <li class="list-group-item list-group-item-success"><span
                                 class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>{{ build.institution }}
                             <a
-                                    href="{% url 'edit_object' build.institution_id 1 %}" class="permissions pull-right"><span
+                                    href="{% url 'edit_object' build.institution_id build.institution_id 1 %}" class="permissions pull-right"><span
                                     class="glyphicon glyphicon-edit"></span>
                             </a>
                             <a
@@ -97,7 +62,7 @@
                                             class="edit-object">{{ build.name }}
                                     </a>
                                     <a
-                                            href="{% url 'edit_object' build.id 2 %}"
+                                            href="{% url 'edit_object' build.id build.id 2 %}"
                                             class="permissions pull-right"><span
                                             class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                     </a>

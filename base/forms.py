@@ -1,6 +1,6 @@
 from django import forms
 from guardian.shortcuts import get_objects_for_user
-from base.models import Institution, Building, Component, ComponentType, FeatureType, Feature, MeterType, Meter
+from base.models import Institution, Building, Component, ComponentType, FeatureType, Feature, MeterType, Meter, MeterData
 
 
 class InstitutionForm(forms.ModelForm):
@@ -70,4 +70,16 @@ class MeterForm(forms.ModelForm):
 
     class Meta:
         model = Meter
+        fields = '__all__'
+
+
+class MeterDataForm(forms.ModelForm):
+    def __init__(self, meters, *args, **kwargs):
+        super(MeterDataForm, self).__init__(*args, **kwargs)
+        self.fields['meter'] = forms.ModelChoiceField(
+            queryset=meters, label='Лічильник'
+        )
+
+    class Meta:
+        model = MeterData
         fields = '__all__'

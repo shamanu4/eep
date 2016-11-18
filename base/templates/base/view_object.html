@@ -20,17 +20,36 @@
         </ul>
     </div>
     <div class="row">
-        <div class="col-md-6">
-            {% if features_list %}
+    <div class="col-md-4">
+            {% if comps %}
                 <ul class="list-group">
-                    <li class="list-group-item list-group-item-success">Характеристики:<a
-                                href="{% url 'create_comp_or_feature' 6 %}" class="pull-right"><span
-                                class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></li>
+                    <li class="list-group-item list-group-item-success"><b>Компоненти</b></li>
                 </ul>
-                {% for feature in features_list %}
+                {% for comp in comps %}
+                    <ul class="list-group">
+                        <li class="list-group-item"><b>Тип: </b>{{ comp.type }} <a
+                                href="{% url 'edit_object' obj.id comp.id 5 %}" class="pull-right"><span
+                                class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
+                        <li class="list-group-item"><b>Кількість: </b>{{ comp.quantity }}</li>
+                    </ul>
+                {% endfor %}
+            {% else %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        Компоненти відсутні
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            {% if features %}
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-success"><b>Характеристики</b></li>
+                </ul>
+                {% for feature in features %}
                     <ul class="list-group">
                         <li class="list-group-item"><b>Компонент: </b>{{ feature.component }} <a
-                                href="{% url 'edit_object' feature.id 3 %}" class="pull-right"><span
+                                href="{% url 'edit_object' obj.id feature.id 3 %}" class="pull-right"><span
                                 class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
                         <li class="list-group-item"><b>Тип характеристики: </b>{{ feature.feature_type }}</li>
                         <li class="list-group-item"><b>Відсоток від загальної кількості: </b>{{ feature.percentage }}
@@ -42,25 +61,20 @@
             {% else %}
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        Компоненти відсутні
-                        <a
-                                href="{% url 'create_comp_or_feature' 6 %}" class="pull-right"><span
-                                class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                        Характеристики відсутні
                     </div>
                 </div>
             {% endif %}
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             {% if meters %}
                 <ul class="list-group">
-                    <li class="list-group-item list-group-item-success">Лічильники:<a
-                                href="{% url 'create_comp_or_feature' 8 %}" class="pull-right"><span
-                                class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></li>
+                    <li class="list-group-item list-group-item-success"><b>Лічильники</b></li>
                 </ul>
                 {% for meter in meters %}
                     <ul class="list-group">
                         <li class="list-group-item"><b>Ідентифікатор лічильника: </b>{{ meter.name }}<a
-                                href="{% url 'edit_object' meter.id 4 %}" class="pull-right"><span
+                                href="{% url 'edit_object' obj.id meter.id 4 %}" class="pull-right"><span
                                 class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
                         <li class="list-group-item"><b>Заклад: </b>{{ meter.institution }}</li>
                         <li class="list-group-item"><b>Будівля: </b>{{ meter.building }}</li>
@@ -72,9 +86,6 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         Лічильники відсутні
-                        <a
-                                href="{% url 'create_comp_or_feature' 8 %}" class="pull-right"><span
-                                class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                     </div>
                 </div>
             {% endif %}

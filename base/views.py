@@ -7,7 +7,7 @@ from django.contrib.auth.models import Permission
 from guardian.shortcuts import assign_perm, remove_perm, get_perms, get_objects_for_user
 from base.models import User, Institution, Building, Component, Feature, Meter
 from base.forms import InstitutionForm, BuildingForm, ComponentTypeForm, ComponentForm, FeatureTypeForm, FeatureForm, \
-    MeterTypeForm, MeterForm
+    MeterTypeForm, MeterForm, MeterDataForm
 
 
 def index(request):
@@ -273,12 +273,12 @@ def remove_perms(request, id, user_id, type):
         return HttpResponseRedirect(reverse("no_permissions"))
 
 
-def edit_object(request, id, type):
+def edit_object(request, obj_id, id, type):
     user = request.user
     if not user.is_authenticated():
         return HttpResponseRedirect(reverse("login"))
     if type == '1':
-        obj = Institution.objects.get(pk=id)
+        obj = Institution.objects.get(pk=obj_id)
         form = InstitutionForm(request.POST or None, instance=obj)
         if user.has_perm('lead_institution', obj):
             if request.method == 'POST':
@@ -292,22 +292,29 @@ def edit_object(request, id, type):
                     "obj": obj
                 }
             )
+        else:
+            return HttpResponseRedirect(reverse("no_permissions"))
     else:
+        perm_obj = Building.objects.get(pk=obj_id)
         if type == '2':
-            obj = Building.objects.get(pk=id)
+            obj = perm_obj
         elif type == '3':
             obj = Feature.objects.get(pk=id)
-        else:
+        elif type == '4':
             obj = Meter.objects.get(pk=id)
-        if user.has_perm('lead_building', obj):
+        else:
+            obj = Component.objects.get(pk=id)
+        if user.has_perm('lead_building', perm_obj):
             institutions = get_objects_for_user(user, 'base.lead_institution')
             buildings = get_objects_for_user(user, 'base.lead_building').order_by('institution')
             if type == '2':
                 form = BuildingForm(institutions, request.POST or None, instance=obj)
             elif type == '3':
                 form = FeatureForm(request.POST or None, instance=obj)
-            else:
+            elif type == '4':
                 form = MeterForm(institutions, buildings, request.POST or None, instance=obj)
+            else:
+                form = ComponentForm(buildings, request.POST or None, instance=obj)
             if request.method == 'POST':
                 form.save()
                 return HttpResponseRedirect(reverse("index"))
@@ -329,17 +336,13 @@ def view_object(request, id):
         return HttpResponseRedirect(reverse("login"))
     try:
         obj = Building.objects.get(pk=id)
-
     except Building.DoesNotExist:
         return HttpResponseRedirect(reverse("index"))
     else:
         if user.has_perm('view_building', obj):
             comps = Component.objects.filter(building=obj.id)
-            features_list = []
-            for comp in comps:
-                features = Feature.objects.filter(component_id=comp.id)
-                for feature in features:
-                    features_list.append(feature)
+            values = comps.values_list('id')
+            features = Feature.objects.filter(component_id__in=values)
             meters = Meter.objects.filter(building_id=obj.id)
             return render(
                 request,
@@ -347,7 +350,7 @@ def view_object(request, id):
                 {
                     'obj': obj,
                     'comps': comps,
-                    'features_list': features_list,
+                    'features': features,
                     'meters': meters
                 }
             )
@@ -362,6 +365,8 @@ def create_comp_or_feature(request, type):
     if user.has_perm('base.create_components'):
         buildings = get_objects_for_user(user, 'base.lead_building')
         institutions = get_objects_for_user(user, 'base.lead_institution')
+        values = buildings.values_list('id')
+        meters = Meter.objects.filter(building_id__in=values)
         if request.method == 'POST':
             if type == '3':
                 form = ComponentTypeForm(request.POST)
@@ -373,8 +378,10 @@ def create_comp_or_feature(request, type):
                 form = FeatureForm(request.POST)
             elif type == '7':
                 form = MeterTypeForm(request.POST)
-            else:
+            elif type == '8':
                 form = MeterForm(institutions, buildings, request.POST)
+            else:
+                form = MeterDataForm(meters, request.POST)
             form.save()
             return HttpResponseRedirect(reverse("index"))
         else:
@@ -389,8 +396,10 @@ def create_comp_or_feature(request, type):
                 form = FeatureForm()
             elif type == '7':
                 form = MeterTypeForm()
-            else:
+            elif type == '8':
                 form = MeterForm(institutions, buildings)
+            else:
+                form = MeterDataForm(meters)
         return render(
             request,
             'base/create_object.html',
