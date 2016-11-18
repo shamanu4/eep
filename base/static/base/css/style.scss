@@ -2,6 +2,12 @@ $black: #333333;
 $green: #3C763D;
 $white: #FFFFFF;
 
+@mixin span-style($color) {
+  opacity: 1;
+  color: $color;
+  transition-duration: 0.3s;
+}
+
 .index-page {
   margin-top: 1.5%
 }
@@ -19,39 +25,28 @@ $white: #FFFFFF;
 }
 
 .list-group {
-  margin-left: -15px;
-}
-
-.list-group-item {
-  .permissions {
+  .edit-item, .permissions {
     opacity: 0;
     transition-duration: 0.3s;
+    margin-left: 1%
   }
-  &:hover > .permissions {
-    opacity: 1;
-    transition-duration: 0.3s;
-    color: $green;
+  &:hover > .list-group-item .edit-item {
+    @include span-style($black)
   }
-  a.edit-object {
-    text-decoration: none;
-    color: $black;
-  }
-  a:not(.edit-object) {
-    margin-left: 1%;
-    span {
-      font-size: 1.25em;
-    }
-  }
-  &.active:hover > .permissions {
-    opacity: 1;
-    transition-duration: 0.3s;
-
+  .list-group-item:hover > .permissions {
+    @include span-style($green);
+    margin-left: 1%
   }
   .glyphicon {
-    margin-right: 2.63%
+    margin-right: 2.63%;
+    font-size: 1.75rem;
   }
   .glyphicon-home {
-    color: $green;
+    color: $black
+  }
+  a {
+    text-decoration: none;
+    color: $black
   }
 }
 

@@ -3,11 +3,7 @@
 {% block content %}
     <ol class="breadcrumb">
             <li><a href="{% url 'index' %}">Головна</a></li>
-            {% if obj.square %}
-                <li><a href="{% url 'building_perms' obj.id %}">{{ obj.name }}</a></li>
-            {% else %}
-                <li><a href="{% url 'institution_perms' obj.id %}">{{ obj.name }}</a></li>
-            {% endif %}
+                <li><a href="{% url 'delegate_perms' obj.id type %}">{{ obj.name }}</a></li>
             <li>{{ user.get_full_name }}</li>
         </ol>
     <p>Видалення прав для <b>{{ user.get_full_name }}</b> на об'єкт <b>{{ obj.name }}</b></p>

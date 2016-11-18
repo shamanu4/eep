@@ -1,81 +1,70 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-    {% if create_objects_perm %}
-    <div class="btn-group col-md-offset-1">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-            Об'єкти <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a href='{% url 'create_object' 1 %}'>Додати заклад</a></li>
-            <li><a href='{% url 'create_object' 2 %}'>Додати будівлю</a></li>
-        </ul>
-    </div>
-    {% endif %}
-    {% if create_components_perm %}
-    <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-            Компоненти <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a href='{% url 'create_comp_or_feature' 3 %}'>Додати тип компоненту</a></li>
-            <li><a href='{% url 'create_comp_or_feature' 4 %}'>Додати компонент</a></li>
-            <li><a href='{% url 'create_comp_or_feature' 5 %}'>Додати тип характеристики</a></li>
-            <li><a href='{% url 'create_comp_or_feature' 6 %}'>Додати характеристику</a></li>
-        </ul>
-    </div>
-        <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-            Лічильники <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a href='{% url 'create_comp_or_feature' 7 %}'>Додати тип лічильника</a></li>
-            <li><a href='{% url 'create_comp_or_feature' 8 %}'>Додати лічильник</a></li>
-            <li><a href='{% url 'create_comp_or_feature' 9 %}'>Додати показник лічильника</a></li>
-        </ul>
-    </div>
-    {% endif %}
-    <div class="row index-page">
-        <div class="col-md-8 col-md-offset-1">
-            <ul class="list-group">
-                    {% for build in buildings %}
-                        {% ifchanged %}
-                            <li class="list-group-item list-group-item-success"><span
-                                class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>{{ build.institution }}
-                            <a
-                                    href="{% url 'edit_object' build.institution_id build.institution_id 1 %}" class="permissions pull-right"><span
-                                    class="glyphicon glyphicon-edit"></span>
-                            </a>
-                            <a
-                                    href="{% url 'institution_perms' build.institution_id %}" class="permissions pull-right"><span
-                                    class="glyphicon glyphicon-user"></span>
-                            </a>
-                        </li>
-                        {% endifchanged %}
-                        <li class="list-group-item sub-item"><span
-                                        class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                                    <a
-                                            href="{% url 'view_object' build.id %}"
-                                            class="edit-object">{{ build.name }}
-                                    </a>
-                                    <a
-                                            href="{% url 'edit_object' build.id build.id 2 %}"
-                                            class="permissions pull-right"><span
-                                            class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                    </a>
-                                    <a
-                                            href="{% url 'building_perms' build.id %}"
-                                            class="permissions pull-right"><span
-                                            class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                                    </a>
-                                </li>
-                    {% endfor %}
-{#                {% endif %}#}
-            </ul>
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            {% if create_objects_perm %}
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+                        Об'єкти <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href='{% url 'create_object' 1 %}'>Додати заклад</a></li>
+                        <li><a href='{% url 'create_object' 2 %}'>Додати будівлю</a></li>
+                    </ul>
+                </div>
+            {% endif %}
+            {% if create_components_perm %}
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+                        Компоненти <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href='{% url 'create_item' 3 %}'>Додати тип компоненту</a></li>
+                        <li><a href='{% url 'create_item' 4 %}'>Додати компонент</a></li>
+                        <li><a href='{% url 'create_item' 5 %}'>Додати тип характеристики</a></li>
+                        <li><a href='{% url 'create_item' 6 %}'>Додати характеристику</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+                        Лічильники <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href='{% url 'create_item' 7 %}'>Додати тип лічильника</a></li>
+                        <li><a href='{% url 'create_item' 8 %}'>Додати лічильник</a></li>
+                    </ul>
+                </div>
+                <a href='{% url 'create_item' 10 %}' class="btn btn-default">Додати тариф</a>
+            {% endif %}
         </div>
-
     </div>
+<div class="row index-page">
+    <div class="col-md-10 col-md-offset-1">
+        <ul class="list-group">
+            {% for build in buildings %}
+                {% ifchanged %}
+                    <li class="list-group-item list-group-item-success"><span
+                            class="glyphicon glyphicon-briefcase" aria-hidden="true"></span><a
+                            href="{% url 'view_object' build.institution_id 1 %}">{{ build.institution }}</a>
+                    </li>
+                {% endifchanged %}
+                <li class="list-group-item sub-item"><span
+                        class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                    <a
+                            href="{% url 'view_object' build.id 2 %}"
+                            class="edit-object">{{ build.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</div>
 {% endblock %}

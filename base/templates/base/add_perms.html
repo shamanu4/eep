@@ -1,17 +1,11 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-    {% if inst %}
         <ol class="breadcrumb">
             <li><a href="{% url 'index' %}">Головна</a></li>
-            <li>{{ inst.name }}</li>
+            <li>{{ obj.name }}</li>
         </ol>
-    {% else %}
-        <ol class="breadcrumb">
-            <li><a href="{% url 'index' %}">Головна</a></li>
-            <li>{{ build.name }}</li>
-        </ol>
-    {% endif %}
+
     <form class="form-horizontal">
         <div class="form-group">
             <label class="col-sm-2 control-label">Користувач</label>
@@ -44,11 +38,11 @@
             <p>Права, що надані Вашим підлеглим:</p>
             {% for item in list %}
                 {% if item.perms|length > 0 %}
-                    {% if inst %}
-                        <a href="{% url 'remove_perms' inst.id item.name.id 1 %}"
+                    {% if type == '1' %}
+                        <a href="{% url 'remove_perms' obj.id item.name.id 1 %}"
                            class="list-group-item list-group-item-success">{{ item.name.get_full_name }}</a>
-                    {% elif build %}
-                        <a href="{% url 'remove_perms' build.id item.name.id 2 %}"
+                    {% else %}
+                        <a href="{% url 'remove_perms' obj.id item.name.id 2 %}"
                            class="list-group-item list-group-item-success">{{ item.name.get_full_name }}</a>
                     {% endif %}
                     {% for perm in item.perms %}

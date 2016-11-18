@@ -1,6 +1,6 @@
 from django import forms
-from guardian.shortcuts import get_objects_for_user
-from base.models import Institution, Building, Component, ComponentType, FeatureType, Feature, MeterType, Meter, MeterData
+from base.models import Institution, Building, Component, ComponentType, FeatureType, Feature, MeterType, Meter, \
+    MeterData, Rate, Receipt
 
 
 class InstitutionForm(forms.ModelForm):
@@ -34,7 +34,6 @@ class ComponentForm(forms.ModelForm):
 
 
 class ComponentTypeForm(forms.ModelForm):
-
     class Meta:
         model = ComponentType
         fields = '__all__'
@@ -74,12 +73,33 @@ class MeterForm(forms.ModelForm):
 
 
 class MeterDataForm(forms.ModelForm):
-    def __init__(self, meters, *args, **kwargs):
+    def __init__(self, meter, *args, **kwargs):
         super(MeterDataForm, self).__init__(*args, **kwargs)
         self.fields['meter'] = forms.ModelChoiceField(
-            queryset=meters, label='Лічильник'
+            queryset=meter, label='Лічильник', empty_label=None
         )
 
     class Meta:
         model = MeterData
+        fields = '__all__'
+
+
+class RateForm(forms.ModelForm):
+    class Meta:
+        model = Rate
+        fields = '__all__'
+
+
+class ReceiptForm(forms.ModelForm):
+    def __init__(self, inst, build, *args, **kwargs):
+        super(ReceiptForm, self).__init__(*args, **kwargs)
+        self.fields['institution'] = forms.ModelChoiceField(
+            queryset=inst, label='Заклад', empty_label=None
+        )
+        self.fields['building'] = forms.ModelChoiceField(
+            queryset=build, label='Будівля', empty_label=None
+        )
+
+    class Meta:
+        model = Receipt
         fields = '__all__'

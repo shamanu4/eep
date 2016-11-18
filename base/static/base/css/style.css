@@ -10,30 +10,27 @@
     .login-form form button {
       float: right; }
 
-.list-group {
-  margin-left: -15px; }
-
-.list-group-item .permissions {
+.list-group .edit-item, .list-group .permissions {
   opacity: 0;
-  transition-duration: 0.3s; }
-.list-group-item:hover > .permissions {
-  opacity: 1;
   transition-duration: 0.3s;
-  color: #3C763D; }
-.list-group-item a.edit-object {
+  margin-left: 1%; }
+.list-group:hover > .list-group-item .edit-item {
+  opacity: 1;
+  color: #333333;
+  transition-duration: 0.3s; }
+.list-group .list-group-item:hover > .permissions {
+  opacity: 1;
+  color: #3C763D;
+  transition-duration: 0.3s;
+  margin-left: 1%; }
+.list-group .glyphicon {
+  margin-right: 2.63%;
+  font-size: 1.75rem; }
+.list-group .glyphicon-home {
+  color: #333333; }
+.list-group a {
   text-decoration: none;
   color: #333333; }
-.list-group-item a:not(.edit-object) {
-  margin-left: 1%; }
-  .list-group-item a:not(.edit-object) span {
-    font-size: 1.25em; }
-.list-group-item.active:hover > .permissions {
-  opacity: 1;
-  transition-duration: 0.3s; }
-.list-group-item .glyphicon {
-  margin-right: 2.63%; }
-.list-group-item .glyphicon-home {
-  color: #3C763D; }
 
 .sub-item > span {
   margin-left: 3%;
