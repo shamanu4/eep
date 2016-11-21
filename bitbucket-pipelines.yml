@@ -1,0 +1,8 @@
+image: shamanu4/ubuntu-postgres-python
+
+pipelines:
+  default:
+    - step:
+        script:
+          - pip install -U tox
+          - tox
