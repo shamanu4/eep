@@ -21,6 +21,7 @@ class BuildingForm(forms.ModelForm):
         self.fields['institution'] = forms.ModelChoiceField(
             queryset=institutions, label='Заклад'
         )
+
     class Meta:
         model = Building
         fields = '__all__'
@@ -32,6 +33,7 @@ class ComponentForm(forms.ModelForm):
         self.fields['building'] = forms.ModelChoiceField(
             queryset=building, label='Будівля', empty_label=None
         )
+        self.fields['building'].widget.attrs['readonly'] = True
 
     class Meta:
         model = Component
@@ -56,7 +58,6 @@ class FeatureForm(forms.ModelForm):
         self.fields['component'] = forms.ModelChoiceField(
             queryset=component, label='Компонент', empty_label=None
         )
-
     class Meta:
         model = Feature
         fields = '__all__'
@@ -77,6 +78,10 @@ class MeterForm(forms.ModelForm):
         self.fields['building'] = forms.ModelChoiceField(
             queryset=buildings, label='Будівля', empty_label=None
         )
+        self.fields['institution'].widget.attrs['readonly'] = True
+        self.fields['building'].widget.attrs['readonly'] = True
+        # self.fields['institution'].widget.attrs['hide'] = True
+        # self.fields['building'].widget.attrs['hide'] = True
 
     class Meta:
         model = Meter
@@ -110,6 +115,7 @@ class ReceiptForm(forms.ModelForm):
         self.fields['building'] = forms.ModelChoiceField(
             queryset=build, label='Будівля', empty_label=None
         )
+        self.fields['building'].widget.attrs['readonly'] = True
 
     class Meta:
         model = Receipt

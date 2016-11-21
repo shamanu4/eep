@@ -12,6 +12,9 @@
   transition-duration: 0.3s;
   margin-left: 1%;
   color: #337AB7; }
+.list-group .active:hover .glyphicon-edit {
+  opacity: 1;
+  color: #FFFFFF; }
 .list-group:hover .glyphicon-edit {
   opacity: 1; }
 .list-group .active a {
@@ -24,5 +27,8 @@
 .list-group a {
   text-decoration: none;
   color: #333333; }
+
+select[readonly] {
+  cursor: not-allowed; }
 
 /*# sourceMappingURL=style.css.map */

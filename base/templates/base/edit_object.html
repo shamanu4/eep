@@ -6,7 +6,7 @@
         <li><a href="{% url 'index' %}">Головна</a></li>
         <li>{{ obj.name }}</li>
     </ol>
-    <div class="col-sm-7 col-md-offset-2">
+    <div class="col-sm-offset-2 col-md-7">
         <form method="post">
             {% csrf_token %}
             {% bootstrap_form form %}

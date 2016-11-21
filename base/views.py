@@ -94,7 +94,7 @@ def view_object(request, id, type):
                 }
             )
         else:
-            return HttpResponseRedirect(reverse("no_permissions"))
+            return HttpResponseRedirect('/no_access/')
 
 
 def delegate_perms(request, id, type):
@@ -170,7 +170,7 @@ def delegate_perms(request, id, type):
                 }
             )
         else:
-            return HttpResponseRedirect(reverse("no_permissions"))
+            return HttpResponseRedirect('/no_access/')
 
 
 def remove_perms(request, id, user_id, type):
@@ -215,7 +215,7 @@ def remove_perms(request, id, user_id, type):
             }
         )
     else:
-        return HttpResponseRedirect(reverse("no_permissions"))
+        return HttpResponseRedirect('/no_access/')
 
 
 def create_object(request, type):
@@ -265,7 +265,7 @@ def create_object(request, type):
                 }
             )
         else:
-            return HttpResponseRedirect(reverse("no_permissions"))
+            return HttpResponseRedirect('/no_access/')
 
 
 def edit_object(request, obj_id, id, type):
@@ -288,7 +288,7 @@ def edit_object(request, obj_id, id, type):
                 }
             )
         else:
-            return HttpResponseRedirect(reverse("no_permissions"))
+            return HttpResponseRedirect('/no_permissions/')
     else:
         perm_obj = get_object_or_404(Building, pk=obj_id)
         if type == '2':
@@ -300,21 +300,22 @@ def edit_object(request, obj_id, id, type):
         else:
             obj = get_object_or_404(Component, pk=id)
         if user.has_perm('lead_building', perm_obj):
-            institutions = get_objects_for_user(user, 'base.lead_institution')
-            buildings = get_objects_for_user(user, 'base.lead_building').order_by('institution')
-            components = Component.objects.filter(building_id=obj_id)
             if type == '2':
+                institutions = get_objects_for_user(user, 'base.lead_institution')
                 form = BuildingForm(institutions, request.POST or None, instance=obj)
             elif type == '3':
+                components = Component.objects.filter(building_id=obj_id)
                 form = FeatureForm(components, request.POST or None, instance=obj)
             elif type == '4':
-                form = MeterForm(institutions, buildings, request.POST or None, instance=obj)
+                inst = Institution.objects.filter(id=perm_obj.institution_id)
+                build = Building.objects.filter(id=obj_id)
+                form = MeterForm(inst, build, request.POST or None, instance=obj)
             else:
-                form = ComponentForm(buildings, request.POST or None, instance=obj)
+                build = Building.objects.filter(id=obj_id)
+                form = ComponentForm(build, request.POST or None, instance=obj)
             if request.method == 'POST':
                 form.save()
                 return HttpResponseRedirect(reverse("index"))
-
             return render(
                 request,
                 'base/edit_object.html',
@@ -324,7 +325,7 @@ def edit_object(request, obj_id, id, type):
                 }
             )
         else:
-            return HttpResponseRedirect(reverse("no_permissions"))
+            return HttpResponseRedirect('/no_access/')
 
 
 def create_item(request, type):
@@ -360,7 +361,7 @@ def create_item(request, type):
                 'form': form
             })
     else:
-        return HttpResponseRedirect(reverse("no_permissions"))
+        return HttpResponseRedirect('/no_access/')
 
 
 def create_item_for_object(request, type, id):
@@ -383,10 +384,10 @@ def create_item_for_object(request, type, id):
                     form = ComponentForm(build, request.POST)
                 elif type == '4':
                     form = FeatureForm(components, request.POST)
-                elif type == '5':
-                    form = MeterForm(inst, build, request.POST)
                 else:
-                    pass
+                    form = MeterForm(inst, build, request.POST)
+                form.save()
+                return HttpResponseRedirect(reverse("view_object", kwargs={'id': obj.id, 'type': 2}))
             else:
                 if type == '1':
                     form = MeterDataForm(meter)
@@ -396,10 +397,8 @@ def create_item_for_object(request, type, id):
                     form = ComponentForm(build)
                 elif type == '4':
                     form = FeatureForm(components)
-                elif type == '5':
-                    form = MeterForm(inst, build)
                 else:
-                    pass
+                    form = MeterForm(inst, build)
             return render(
                 request,
                 'base/create_object.html',
@@ -408,26 +407,26 @@ def create_item_for_object(request, type, id):
                     'form': form
                 })
         else:
-            return HttpResponseRedirect(reverse("no_permissions"))
+            return HttpResponseRedirect('/no_access/')
 
 
-def invite(request):
-    user = request.user
-    if not user.is_authenticated():
-        return HttpResponseRedirect('accounts/login/')
-    else:
-        text = ''
-        if user.has_perm('base.invite_users'):
-            if request.GET.get('e'):
-                email = request.GET['e']
-                invite = Invitation.create(email, inviter=request.user)
-                invite.send_invitation(request)
-                text = 'Запрошення на адресу %s надіслане' % email
-            return render(request, 'base/invite.html', {
-                'text': text
-            })
-        else:
-            return HttpResponseRedirect(reverse("no_permissions"))
+# def invite(request):
+#     user = request.user
+#     if not user.is_authenticated():
+#         return HttpResponseRedirect('accounts/login/')
+#     else:
+#         text = ''
+#         if user.has_perm('base.invite_users'):
+#             if request.GET.get('e'):
+#                 email = request.GET['e']
+#                 invite = Invitation.create(email, inviter=request.user)
+#                 invite.send_invitation(request)
+#                 text = 'Запрошення на адресу %s надіслане' % email
+#             return render(request, 'base/invite.html', {
+#                 'text': text
+#             })
+#         else:
+#             return HttpResponseRedirect('/no_access/')
 
 
 def cabinet(request):
@@ -458,7 +457,7 @@ def edit_user(request, id):
             if request.method == 'POST':
                 if form.is_valid():
                     form.save()
-                    return HttpResponseRedirect(reverse("cabinet"))
+                    return HttpResponseRedirect('/cabinet/')
             return render(
                 request,
                 'base/edit_object.html',
@@ -468,4 +467,4 @@ def edit_user(request, id):
                 }
             )
         else:
-            return HttpResponseRedirect(reverse("no_permissions"))
+            return HttpResponseRedirect('/no_access/')

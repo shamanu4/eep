@@ -21,6 +21,10 @@ $blue: #337AB7;
     margin-left: 1%;
     color: $blue
   }
+  .active:hover .glyphicon-edit {
+    opacity: 1;
+    color: $white;
+  }
   &:hover .glyphicon-edit {
     opacity: 1;
   }
@@ -38,4 +42,7 @@ $blue: #337AB7;
     text-decoration: none;
     color: $black
   }
+}
+select[readonly] {
+  cursor: not-allowed;
 }
