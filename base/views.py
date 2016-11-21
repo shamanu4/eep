@@ -8,6 +8,7 @@ from guardian.shortcuts import assign_perm, remove_perm, get_perms, get_objects_
 from base.models import User, Institution, Building, Component, Feature, Meter
 from base.forms import InstitutionForm, BuildingForm, ComponentTypeForm, ComponentForm, FeatureTypeForm, FeatureForm, \
     MeterTypeForm, MeterForm, MeterDataForm, RateForm, ReceiptForm
+from invitations.models import Invitation
 
 
 def index(request):
@@ -25,6 +26,10 @@ def index(request):
         create_components_perm = True
     else:
         create_components_perm = False
+    if user.has_perm('base.invite_users'):
+        invite_users_perm = True
+    else:
+        invite_users_perm = False
     return render(
         request,
         'base/index.html',
@@ -32,7 +37,8 @@ def index(request):
             'institutions': institutions,
             'buildings': buildings,
             'create_objects_perm': create_objects_perm,
-            'create_components_perm': create_components_perm
+            'create_components_perm': create_components_perm,
+            'invite_users_perm': invite_users_perm
         }
     )
 
@@ -127,6 +133,8 @@ def delegate_perms(request, id, type):
             permissions.append('create_objects')
         if user.has_perm('base.create_components'):
             permissions.append('create_components')
+        if user.has_perm('base.invite_users'):
+            permissions.append('invite_users')
         list = []
         for des in descendants:
             a = get_perms(des, obj)
@@ -136,6 +144,8 @@ def delegate_perms(request, id, type):
                 a.append('delegate_permissions')
             if des.has_perm('base.create_components'):
                 a.append('create_components')
+            if des.has_perm('base.invite_users'):
+                a.append('invite_users')
             b = {'name': des,
                  'perms': a}
             list.append(b)
@@ -154,7 +164,7 @@ def delegate_perms(request, id, type):
                     assign_perm('view_institution', perm_user, obj)
                     for build in builds:
                         assign_perm('view_building', perm_user, build)
-                elif cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components':
+                elif cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components' or cur_perm == 'invite_users':
                     permission = Permission.objects.get(codename=cur_perm)
                     perm_user.user_permissions.add(permission)
             else:
@@ -163,7 +173,7 @@ def delegate_perms(request, id, type):
                     assign_perm('lead_building', perm_user, obj)
                 if cur_perm == 'view_building':
                     assign_perm('view_building', perm_user, obj)
-                elif cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components':
+                elif cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components' or cur_perm == 'invite_users':
                     permission = Permission.objects.get(codename=cur_perm)
                     perm_user.user_permissions.add(permission)
             return HttpResponseRedirect(reverse("delegate_perms", kwargs={'id': obj.id, 'type': type}))
@@ -416,3 +426,21 @@ def create_item_for_object(request, type, id):
             })
     else:
         return HttpResponseRedirect(reverse("no_permissions"))
+
+
+def invite(request):
+    user = request.user
+    if not user.is_authenticated():
+        return HttpResponseRedirect(reverse("login"))
+    else:
+        if user.has_perm('base.invite_users'):
+            if request.GET.get('e'):
+                email = request.GET['e']
+                invite = Invitation.create(email, inviter=request.user)
+                invite.send_invitation(request)
+                text = 'Запрошення на адресу %s надіслане' % email
+            return render(request, 'base/invite.html', {
+                'text': text
+            })
+        else:
+            return HttpResponseRedirect(reverse("no_permissions"))

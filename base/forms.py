@@ -1,4 +1,3 @@
-# from bootstrap3_datetime.widgets import DateTimePicker
 from django import forms
 from base.models import Institution, Building, Component, ComponentType, FeatureType, Feature, MeterType, Meter, \
     MeterData, Rate, Receipt
@@ -16,8 +15,6 @@ class BuildingForm(forms.ModelForm):
         self.fields['institution'] = forms.ModelChoiceField(
             queryset=institutions, label='Заклад'
         )
-    # date_from = forms.DateField(widget=DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
-
     class Meta:
         model = Building
         fields = '__all__'

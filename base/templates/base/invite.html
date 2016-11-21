@@ -1,0 +1,24 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'index' %}">Головна</a></li>
+        <li>Запрошення нового корисувача</li>
+    </ol>
+    <div class="row">
+        <form action="">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Електронна пошта</label>
+            <div class="col-sm-6">
+                <input type="email" name='e' class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-primary">Запросити</button>
+            </div>
+            <p>{{ text }}</p>
+        </div>
+    </form>
+    </div>
+{% endblock %}

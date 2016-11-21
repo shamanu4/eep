@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'bootstrap3_datetime',
+    'invitations',
 
     # Project apps.
     'base',
@@ -72,6 +72,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'EEP.urls'
 
+ACCOUNT_ADAPTER = 'invitations.models.InvitationsAdapter'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -89,6 +91,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'EEP.wsgi.application'
+
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
 
 
 # Database

@@ -21,6 +21,12 @@ class User(AbstractUser, MPTTModel):
     REQUIRED_FIELDS = ['username']
 
     class Meta:
+        permissions = (
+            ('create_objects', "Створювати об'єкти"),
+            ('create_components', 'Створювати компоненти'),
+            ('delegate_permissions', 'Делегувати повноваження'),
+            ('invite_users', 'Запрошувати користувачів'),
+        )
         verbose_name = 'Користувач'
         verbose_name_plural = 'Користувачі'
 
