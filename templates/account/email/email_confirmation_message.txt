@@ -1,0 +1,8 @@
+{% load account %}{% user_display user as user_display %}{% load i18n %}{% autoescape off %}{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Доброго дня від {{ site_name }}!
+
+Ви отримали цього листа тому, що користувач {{ user_display }} на сайті {{ site_domain }} вказав цю електронну скриньку при реєстрації.
+
+To confirm this is correct, go to {{ activate_url }}
+{% endblocktrans %}{% endautoescape %}
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Thank you from {{ site_name }}!
+{{ site_domain }}{% endblocktrans %}

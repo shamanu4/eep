@@ -7,18 +7,25 @@
     </ol>
     <div class="row">
         <form action="">
-        <div class="form-group">
-            <label class="col-sm-2 control-label">Електронна пошта</label>
-            <div class="col-sm-6">
-                <input type="email" name='e' class="form-control">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Електронна пошта</label>
+                <div class="col-sm-6">
+                    <input type="email" name='e' class="form-control">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-1">
-                <button type="submit" class="btn btn-primary">Запросити</button>
+            <div class="form-group">
+                <div class="col-sm-1">
+                    <button type="submit" class="btn btn-primary">Запросити</button>
+                </div>
             </div>
-            <p>{{ text }}</p>
-        </div>
-    </form>
+        </form>
+
     </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="alert alert-success" role="alert">{{ text }}</div>
+        </div>
+
+    </div>
+
 {% endblock %}

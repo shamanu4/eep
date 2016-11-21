@@ -2,11 +2,11 @@
 {% autoescape off %}
 {% blocktrans %}
 
-Здоров!
+Доброго дня!
 
-You ({{ email }}) have been invited to join {{ site_name }}
+Ваша поштова скринька ({{ email }}) була вказана при запрошенні на сайт {{ site_name }}
 
-If you'd like to join, please go to {{ invite_url }}
+Для реєстрації перейдіть за посиланням: {{ invite_url }}
 
 {% endblocktrans %}
 {% endautoescape %}

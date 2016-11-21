@@ -14,7 +14,7 @@ from invitations.models import Invitation
 def index(request):
     user = request.user
     if not user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect('accounts/login/?next=/')
 
     institutions = get_objects_for_user(user, 'base.view_institution')
     buildings = get_objects_for_user(user, 'base.view_building').order_by('institution')
@@ -70,7 +70,7 @@ def no_permissions(request):
 def view_object(request, id, type):
     user = request.user
     if not user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect('accounts/login/?next=/')
     if type == '1':
         obj = Institution.objects.get(pk=id)
         view_perm = 'view_institution'
@@ -119,7 +119,7 @@ def view_object(request, id, type):
 
 def delegate_perms(request, id, type):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect('accounts/login/?next=/')
     user = request.user
     if type == '1':
         obj = Institution.objects.get(id=id)
@@ -194,7 +194,7 @@ def delegate_perms(request, id, type):
 
 def remove_perms(request, id, user_id, type):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect('accounts/login/?next=/')
     if type == '1':
         obj = Institution.objects.get(pk=id)
         perm = 'lead_institution'
@@ -239,7 +239,7 @@ def remove_perms(request, id, user_id, type):
 
 def create_object(request, type):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect('accounts/login/?next=/')
     user = request.user
     if user.has_perm('base.create_objects'):
         institutions = get_objects_for_user(user, 'base.lead_institution')
@@ -289,7 +289,7 @@ def create_object(request, type):
 def edit_object(request, obj_id, id, type):
     user = request.user
     if not user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect('accounts/login/?next=/')
     if type == '1':
         obj = Institution.objects.get(pk=obj_id)
         form = InstitutionForm(request.POST or None, instance=obj)
@@ -348,7 +348,7 @@ def edit_object(request, obj_id, id, type):
 def create_item(request, type):
     user = request.user
     if not user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect('accounts/login/?next=/')
     if user.has_perm('base.create_components'):
         if request.method == 'POST':
             if type == '3':
@@ -384,7 +384,7 @@ def create_item(request, type):
 def create_item_for_object(request, type, id):
     user = request.user
     if not user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect('accounts/login/?next=/')
     obj = Building.objects.get(id=id)
     if user.has_perm('lead_building', obj):
         meter = Meter.objects.filter(building_id=obj.id)
@@ -431,8 +431,9 @@ def create_item_for_object(request, type, id):
 def invite(request):
     user = request.user
     if not user.is_authenticated():
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect('accounts/login/?next=/')
     else:
+        text = ''
         if user.has_perm('base.invite_users'):
             if request.GET.get('e'):
                 email = request.GET['e']
