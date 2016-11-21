@@ -92,8 +92,6 @@ TEMPLATES = [
     },
 ]
 
-print(TEMPLATES)
-
 WSGI_APPLICATION = 'EEP.wsgi.application'
 
 EMAIL_HOST = os.getenv('EMAIL_HOST')

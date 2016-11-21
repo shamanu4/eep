@@ -37,7 +37,7 @@ class User(AbstractUser, MPTTModel):
         return "%s %s %s" % (self.last_name, self.first_name, self.middle_name)
 
     def get_short_name(self):
-        return self.first_name
+        return "%s %s. %s." % (self.last_name, self.first_name[0], self.middle_name[0])
 
 
 class Category(models.Model):

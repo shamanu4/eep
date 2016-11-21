@@ -1,6 +1,12 @@
 from django import forms
 from base.models import Institution, Building, Component, ComponentType, FeatureType, Feature, MeterType, Meter, \
-    MeterData, Rate, Receipt
+    MeterData, Rate, Receipt, User
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['post', 'last_name', 'first_name', 'middle_name', 'parent',]
 
 
 class InstitutionForm(forms.ModelForm):

@@ -1,13 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.contrib.auth import login as login, logout
-from django.contrib.auth.forms import AuthenticationForm
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Permission
+from django.shortcuts import get_object_or_404
 from guardian.shortcuts import assign_perm, remove_perm, get_perms, get_objects_for_user
 from base.models import User, Institution, Building, Component, Feature, Meter
 from base.forms import InstitutionForm, BuildingForm, ComponentTypeForm, ComponentForm, FeatureTypeForm, FeatureForm, \
-    MeterTypeForm, MeterForm, MeterDataForm, RateForm, ReceiptForm
+    MeterTypeForm, MeterForm, MeterDataForm, RateForm, ReceiptForm, UserForm
 from invitations.models import Invitation
 
 
@@ -41,26 +40,6 @@ def index(request):
             'invite_users_perm': invite_users_perm
         }
     )
-
-
-def login_view(request):
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            login(request, form.get_user())
-            return HttpResponseRedirect(reverse("index"))
-    else:
-        form = AuthenticationForm()
-    return render(
-        request,
-        'base/login.html',
-        {'form': form}
-    )
-
-
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect(reverse("login"))
 
 
 def no_permissions(request):
@@ -443,5 +422,46 @@ def invite(request):
             return render(request, 'base/invite.html', {
                 'text': text
             })
+        else:
+            return HttpResponseRedirect(reverse("no_permissions"))
+
+
+def cabinet(request):
+    user = request.user
+    if not user.is_authenticated():
+        return HttpResponseRedirect('accounts/login/?next=/')
+    else:
+        descendants = user.get_descendants()
+        return render(
+            request,
+            'base/cabinet.html',
+            {
+                'user': user,
+                'descendants': descendants
+            }
+        )
+
+
+def edit_user(request, id):
+    user = request.user
+    if not user.is_authenticated():
+        return HttpResponseRedirect('accounts/login/?next=/')
+    else:
+        obj = get_object_or_404(User, id=id)
+        descendants = user.get_descendants(include_self=True)
+        if obj in descendants:
+            form = UserForm(request.POST or None, instance=obj)
+            if request.method == 'POST':
+                if form.is_valid():
+                    form.save()
+                    return HttpResponseRedirect(reverse("cabinet"))
+            return render(
+                request,
+                'base/edit_object.html',
+                {
+                    'form': form,
+                    "obj": obj
+                }
+            )
         else:
             return HttpResponseRedirect(reverse("no_permissions"))

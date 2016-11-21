@@ -1,0 +1,21 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <div class="row">
+        <ul class="nav nav-pills">
+            <li role="presentation" class="active"><a href="{% url 'cabinet' %}">Кабінет</a></li>
+            <li role="presentation"><a href="{% url 'account_change_password' %}">Змінити пароль</a></li>
+            <li role="presentation"><a href="{% url 'account_email' %}">Керування ел. поштою</a></li>
+        </ul>
+        <h4>Профіль користувача {{ user.get_short_name }} <a href="{% url 'edit_user' user.id %}">редагувати</a></h4>
+        <div class="col-md-8">
+            <h3>Ваші підлеглі: </h3>
+            <ul class="list-group">
+                {% for user in descendants %}
+                    <li class="list-group-item"><a
+                            href={% url 'edit_user' user.id %}>{{ user.get_full_name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
