@@ -1,0 +1,13 @@
+image: shamanu4/ubuntu-postgres-python
+
+pipelines:
+  default:
+    - step:
+        script:
+          - /etc/init.d/postgresql start
+          - psql -c "CREATE USER saladrai WITH PASSWORD '*********';" -U postgres
+          - psql -c "ALTER USER saladrai WITH SUPERUSER;" -U postgres
+          - psql -c "CREATE DATABASE eep WITH OWNER saladrai;" -U postgres
+          - pip install -U tox
+          - tox
+          - echo "OK"
