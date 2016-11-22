@@ -80,8 +80,6 @@ class MeterForm(forms.ModelForm):
         )
         self.fields['institution'].widget.attrs['readonly'] = True
         self.fields['building'].widget.attrs['readonly'] = True
-        # self.fields['institution'].widget.attrs['hide'] = True
-        # self.fields['building'].widget.attrs['hide'] = True
 
     class Meta:
         model = Meter

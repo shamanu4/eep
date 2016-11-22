@@ -6,31 +6,36 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'base/css/bootstrap.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'base/css/style.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'base/css/jquery-ui.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'base/css/bootstrap-datetimepicker.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'base/css/bootstrap-datepicker3.min.css' %}" type="text/css">
     <script src="{% static 'base/js/jquery-3.1.1.min.js' %}"></script>
-    <script src="{% static 'base/js/jquery-ui.min.js' %}"></script>
-    <script src="{% static 'base/js/datepicker-uk.js' %}"></script>
-    <script src="{% static 'base/js/datepicker.js' %}"></script>
     <script src="{% static 'base/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'base/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'base/js/bootstrap-datetimepicker.uk.js' %}"></script>
+    <script src="{% static 'base/js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'base/js/bootstrap-datepicker.uk.min.js' %}"></script>
+    <script src="{% static 'base/js/datepicker.js' %}"></script>
+
 </head>
 <body>
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a href="{% url 'index' %}" class="navbar-text">Програма Енергоеффективності міста Умань</a>
+            <a href="{% url 'index' %}" class="navbar-brand">Програма Енергоеффективності міста Умань</a>
         </div>
         {% if request.user.is_authenticated %}
-            <div class="btn-group navbar-right">
-                <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    {{ request.user.get_short_name }} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="{% url 'cabinet' %}">Кабінет</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="{% url 'account_logout' %}">Вихід</a></li>
-                </ul>
-            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">{{ request.user.get_short_name }} <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'cabinet' %}">Кабінет</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'account_logout' %}">Вихід</a></li>
+                    </ul>
+                </li>
+            </ul>
         {% endif %}
     </div>
 </nav>

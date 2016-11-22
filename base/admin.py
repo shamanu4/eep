@@ -3,28 +3,70 @@ from guardian.admin import GuardedModelAdmin
 from base.models import User, Category, ObjectPurpose, Institution, Building, MeterType, Meter, MeterData, Rate, Receipt, Component, ComponentType, Feature, FeatureType
 
 
-class InstitutionAdmin(GuardedModelAdmin):
-    pass
-admin.site.register(Institution, InstitutionAdmin)
-
-
+@admin.register(Building)
 class BuildingAdmin(GuardedModelAdmin):
     pass
-admin.site.register(Building, BuildingAdmin)
 
 
+class BuildingInline(admin.TabularInline):
+    model = Building
+    extra = 10
+
+
+@admin.register(Institution)
+class InstitutionAdmin(GuardedModelAdmin):
+    inlines = [BuildingInline, ]
+
+
+@admin.register(User)
 class UserAdmin(GuardedModelAdmin):
     pass
-admin.site.register(User, UserAdmin)
 
-admin.site.register(Category)
+
+class ObjectPurposeInline(admin.TabularInline):
+    model = ObjectPurpose
+    extra = 10
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    inlines = [ObjectPurposeInline]
+
+
+class MeterInline(admin.TabularInline):
+    model = Meter
+    extra = 10
+
+
+@admin.register(MeterType)
+class MeterTypeAdmin(admin.ModelAdmin):
+    inlines = [MeterInline]
+
+
+class ComponentInline(admin.TabularInline):
+    model = Component
+    extra = 10
+
+
+@admin.register(ComponentType)
+class ComponentTypeAdmin(admin.ModelAdmin):
+    inlines = [ComponentInline]
+
+
+class FeatureInline(admin.TabularInline):
+    model = Feature
+    extra = 10
+
+
+@admin.register(FeatureType)
+class FeatureTypeAdmin(admin.ModelAdmin):
+    inlines = [FeatureInline]
+
+
 admin.site.register(ObjectPurpose)
-admin.site.register(MeterType)
-admin.site.register(Meter)
 admin.site.register(MeterData)
 admin.site.register(Rate)
 admin.site.register(Receipt)
-admin.site.register(Component)
-admin.site.register(ComponentType)
 admin.site.register(Feature)
-admin.site.register(FeatureType)
+admin.site.register(Component)
+admin.site.register(Meter)

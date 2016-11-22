@@ -132,7 +132,7 @@ class MeterData(models.Model):
     meter = models.ForeignKey(Meter, verbose_name='Лічильник')
     prev_data = models.DecimalField('Попередні дані', max_digits=9, decimal_places=3)
     cur_data = models.DecimalField('Поточні дані', max_digits=9, decimal_places=3)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField('Дата', default=date.today)
     manager = models.ForeignKey(User, verbose_name='Відповідальна особа')
 
     class Meta:
@@ -224,7 +224,7 @@ class Feature(models.Model):
         verbose_name_plural = 'Характеристики'
 
     def __str__(self):
-        return "%s %s %s грн." % (self.component, self.feature_type, self.percentage)
+        return "%s %s %s" % (self.component, self.feature_type, self.percentage)
 
     def clean(self):
         current_day = date.today()
