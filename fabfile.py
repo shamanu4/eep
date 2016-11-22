@@ -111,6 +111,7 @@ def push_sources():
     Push source code to server
     """
     ensure_src_dir()
+    local('git pull origin master --quiet')
     local('git push origin master --quiet')
     with cd(env.code_dir):
         run('git fetch')
