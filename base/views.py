@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Permission
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import assign_perm, remove_perm, get_perms, get_objects_for_user
-from base.models import User, Institution, Building, Component, Feature, Meter
+from base.models import User, Institution, Building, Component, Feature, Meter, MeterData
 from base.forms import InstitutionForm, BuildingForm, ComponentTypeForm, ComponentForm, FeatureTypeForm, FeatureForm, \
     MeterTypeForm, MeterForm, MeterDataForm, RateForm, ReceiptForm, UserForm
 from invitations.models import Invitation
@@ -468,5 +468,20 @@ def edit_user(request, id):
                     "obj": obj
                 }
             )
+        else:
+            return HttpResponseRedirect('/no_access/')
+
+
+def meter_data_view(request, id):
+    user = request.user
+    if not user.is_authenticated():
+        return HttpResponseRedirect('/accounts/login/')
+    else:
+        obj = get_object_or_404(Building, id=id)
+        if user.has_perm('view_building', obj):
+            meters = Meter.objects.filter(building_id=id)
+            values = meters.values_list('id')
+            meters_data = MeterData.objects.filter(meter_id__in=values)
+            return render(request, 'base/view_meters.html', {'meters': meters})
         else:
             return HttpResponseRedirect('/no_access/')

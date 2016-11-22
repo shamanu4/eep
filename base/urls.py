@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from base.views import index, no_permissions, create_object, remove_perms, edit_object, view_object, create_item, \
-    create_item_for_object, delegate_perms, cabinet, edit_user
+    create_item_for_object, delegate_perms, cabinet, edit_user, meter_data_view
 
 urlpatterns = [
     url(r'^$', index, name='index'),
@@ -15,5 +15,6 @@ urlpatterns = [
     # url(r'^invite/', invite, name='invite'),
     url(r'^cabinet/', cabinet, name='cabinet'),
     url(r'^edit_user_id_(?P<id>\d+)/', edit_user, name='edit_user'),
+    url(r'^meter_data_object_(?P<id>\d+)/', meter_data_view, name='meter_data_view'),
 
 ]
