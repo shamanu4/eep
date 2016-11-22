@@ -10,4 +10,4 @@ pipelines:
           - psql -c "CREATE DATABASE eep WITH OWNER saladrai;" -U postgres
           - pip install -U tox
           - tox
-          - echo "OK."
+          - echo "OK"
