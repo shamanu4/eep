@@ -23,29 +23,28 @@
         <div class="navbar-header">
             <a href="{% url 'index' %}" class="navbar-brand">Програма Енергоеффективності міста Умань</a>
         </div>
-        {% if REVISION %}
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="https://bitbucket.org/timdevs/eep/commits/{{ REVISION }}"
-                                           target="_blank">rev: {{ REVISION|truncatechars:11 }}</a></li>
-            </ul>
-        </div>
-        {% endif %}
 
-        {% if request.user.is_authenticated %}
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">{{ request.user.get_short_name }} <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{% url 'cabinet' %}">Кабінет</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="{% url 'account_logout' %}">Вихід</a></li>
-                    </ul>
-                </li>
-            </ul>
-        {% endif %}
+        <ul class="nav navbar-nav navbar-right">
+            {% if REVISION %}
+                <ul class="nav navbar-nav">
+                    <li><a href="https://bitbucket.org/timdevs/eep/commits/{{ REVISION }}"
+                           target="_blank">rev: {{ REVISION|truncatechars:11 }}</a></li>
+                </ul>
+            {% endif %}
+            <li>
+                {% if request.user.is_authenticated %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">{{ request.user.get_short_name }} <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'cabinet' %}">Кабінет</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'account_logout' %}">Вихід</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+        </ul>
+
     </div>
 </nav>
 <div class="container">
