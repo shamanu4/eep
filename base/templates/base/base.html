@@ -23,6 +23,15 @@
         <div class="navbar-header">
             <a href="{% url 'index' %}" class="navbar-brand">Програма Енергоеффективності міста Умань</a>
         </div>
+        {% if REVISION %}
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="https://bitbucket.org/timdevs/eep/commits/{{ REVISION }}"
+                                           target="_blank">rev: {{ REVISION|truncatechars:11 }}</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
         {% if request.user.is_authenticated %}
             <ul class="nav navbar-nav navbar-right">
                 <li>

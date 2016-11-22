@@ -1,3 +1,4 @@
+dealer==2.0.5
 defusedxml==0.4.1
 Django==1.10.3
 django-allauth==0.28.0
@@ -6,9 +7,21 @@ django-braces==1.10.0
 django-guardian==1.4.6
 django-invitations==1.8
 django-mptt==0.8.6
+ecdsa==0.13
+Fabric3==1.12.post1
+gitdb2==2.0.0
+GitPython==2.1.0
 oauthlib==2.0.0
+paramiko==1.17.2
+pluggy==0.4.0
 psycopg2==2.6.2
+py==1.4.31
+pycrypto==2.6.1
+python-dateutil==2.6.0
 python3-openid==3.0.10
 requests==2.12.1
 requests-oauthlib==0.7.0
 six==1.10.0
+smmap2==2.0.1
+tox==2.5.0
+virtualenv==15.1.0
