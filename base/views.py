@@ -192,9 +192,11 @@ def remove_perms(request, id, user_id, type):
             permissions.append('delegate_permissions')
         if user.has_perm('base.create_components'):
             permissions.append('create_components')
+        if user.has_perm('base.invite_users'):
+            permissions.append('invite_users')
         if request.GET.get('p'):
             cur_perm = request.GET['p']
-            if cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components':
+            if cur_perm == 'create_objects' or cur_perm == 'delegate_permissions' or cur_perm == 'create_components' or cur_perm == 'invite_users':
                 permission = Permission.objects.get(codename=cur_perm)
                 user.user_permissions.remove(permission)
                 for des in descendants:

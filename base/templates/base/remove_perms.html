@@ -1,4 +1,5 @@
 {% extends 'base/base.html' %}
+{% load i18n %}
 
 {% block content %}
     <ol class="breadcrumb">
@@ -13,7 +14,7 @@
             <div class="col-sm-6">
                 <select name='p' class="form-control">
                     {% for per in permissions %}
-                        <option value={{ per }}>{{ per }}</option>
+                        <option value={{ per }}>{% trans per %}</option>
                     {% endfor %}
                 </select>
             </div>
