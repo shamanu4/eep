@@ -19,6 +19,15 @@
         <div class="navbar-header">
             <a href="{% url 'index' %}" class="navbar-text">Програма Енергоеффективності міста Умань</a>
         </div>
+        {% if REVISION %}
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="https://bitbucket.org/timdevs/eep/commits/{{ REVISION }}"
+                                           target="_blank">rev: {{ REVISION|truncatechars:11 }}</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
         {% if request.user.is_authenticated %}
             <div class="btn-group navbar-right">
                 <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown"
