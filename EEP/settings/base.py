@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'invitations',
+    'mathfilters',
 
     # Project apps.
     'base',

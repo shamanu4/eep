@@ -95,7 +95,7 @@ class MeterDataForm(forms.ModelForm):
 
     class Meta:
         model = MeterData
-        fields = '__all__'
+        exclude = ['manager']
 
 
 class RateForm(forms.ModelForm):

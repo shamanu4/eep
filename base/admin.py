@@ -63,10 +63,35 @@ class FeatureTypeAdmin(admin.ModelAdmin):
     inlines = [FeatureInline]
 
 
+class MeterDataInline(admin.TabularInline):
+    model = MeterData
+    extra = 10
+    exclude = ['manager']
+
+
+@admin.register(Meter)
+class MeterAdmin(admin.ModelAdmin):
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for instance in instances:
+            instance.manager = request.user
+            instance.save()
+        formset.save_m2m()
+    inlines = [MeterDataInline]
+
+
 admin.site.register(ObjectPurpose)
-admin.site.register(MeterData)
+
+
+@admin.register(MeterData)
+class MeterDataAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        obj.manager = request.user
+        obj.save()
+
+    exclude = ['manager']
+
 admin.site.register(Rate)
 admin.site.register(Receipt)
 admin.site.register(Feature)
 admin.site.register(Component)
-admin.site.register(Meter)

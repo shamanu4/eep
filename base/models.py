@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import UserManager
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.datetime_safe import date
+from django.utils.datetime_safe import date, datetime
 from mptt.models import MPTTModel, TreeForeignKey
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext_lazy as _
@@ -132,7 +132,7 @@ class MeterData(models.Model):
     meter = models.ForeignKey(Meter, verbose_name='Лічильник')
     prev_data = models.DecimalField('Попередні дані', max_digits=9, decimal_places=3)
     cur_data = models.DecimalField('Поточні дані', max_digits=9, decimal_places=3)
-    timestamp = models.DateTimeField('Дата', default=date.today)
+    timestamp = models.DateTimeField('Дата', default=datetime.now)
     manager = models.ForeignKey(User, verbose_name='Відповідальна особа')
 
     class Meta:

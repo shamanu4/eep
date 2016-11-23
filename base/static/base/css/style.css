@@ -31,4 +31,10 @@
 select[readonly] {
   cursor: not-allowed; }
 
+.grey {
+  background-color: #ececec; }
+
+.text-info {
+  margin-top: 2.36% !important; }
+
 /*# sourceMappingURL=style.css.map */

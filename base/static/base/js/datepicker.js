@@ -6,7 +6,7 @@ $(function () {
             autoclose: true
         }
     );
-    $('#id_timestamp').datetimepicker(
+    $('#id_timestamp, #sort_date_from, #sort_date_until').datetimepicker(
         'hide', {
             format: 'yyyy-mm-dd hh:ii:ss',
             language: 'uk',

@@ -1,6 +1,7 @@
 $black: #333333;
 $white: #FFFFFF;
 $blue: #337AB7;
+$light-grey: #ececec;
 
 .login-form {
   height: auto;
@@ -45,4 +46,12 @@ $blue: #337AB7;
 }
 select[readonly] {
   cursor: not-allowed;
+}
+
+.grey {
+  background-color: $light-grey;
+}
+
+.text-info {
+  margin-top: 2.36% !important;
 }

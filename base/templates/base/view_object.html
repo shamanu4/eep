@@ -52,6 +52,7 @@
             </div>
             <div class="col-md-3">
                 <div class="btn-group-vertical" role="group">
+                    <a href="{% url 'meter_data_view' obj.id %}" class="btn btn-default">Показники лічильника</a>
                     {% if lead_perm %}
                         <a href="{% url 'create_item_for_object' 1 obj.id %}" class="btn btn-default">Додати показник
                             лічильника</a>

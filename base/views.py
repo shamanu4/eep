@@ -7,7 +7,7 @@ from guardian.shortcuts import assign_perm, remove_perm, get_perms, get_objects_
 from base.models import User, Institution, Building, Component, Feature, Meter, MeterData
 from base.forms import InstitutionForm, BuildingForm, ComponentTypeForm, ComponentForm, FeatureTypeForm, FeatureForm, \
     MeterTypeForm, MeterForm, MeterDataForm, RateForm, ReceiptForm, UserForm
-from invitations.models import Invitation
+from datetime import date, timedelta as td, datetime
 
 
 def index(request):
@@ -380,9 +380,11 @@ def create_item_for_object(request, type, id):
             if request.method == 'POST':
                 if type == '1':
                     form = MeterDataForm(meter, request.POST)
+                    form = form.save(commit=False)
+                    form.manager = user
                 elif type == '2':
                     form = ReceiptForm(inst, build, request.POST)
-                elif type == '3' :
+                elif type == '3':
                     form = ComponentForm(build, request.POST)
                 elif type == '4':
                     form = FeatureForm(components, request.POST)
@@ -479,9 +481,48 @@ def meter_data_view(request, id):
     else:
         obj = get_object_or_404(Building, id=id)
         if user.has_perm('view_building', obj):
-            meters = Meter.objects.filter(building_id=id)
-            values = meters.values_list('id')
-            meters_data = MeterData.objects.filter(meter_id__in=values)
-            return render(request, 'base/view_meters.html', {'meters': meters})
+            if request.GET.get('f') and request.GET.get('u'):
+                datetime_from = request.GET['f']
+                datetime_until = request.GET['u']
+                date_from = datetime.strptime(datetime_from[:10], '%Y-%m-%d').date()
+                date_until = datetime.strptime(datetime_until[:10], '%Y-%m-%d').date()
+                delta = date_until - date_from
+                dates_list = []
+                for i in range(delta.days + 1):
+                    date = date_from + td(days=i)
+                    dates_list.append(date)
+                meters = Meter.objects.filter(building_id=id)
+                values = meters.values_list('id')
+                meters_data = MeterData.objects.filter(meter_id__in=values, timestamp__gte=datetime_from,
+                                                       timestamp__lte=datetime_until)
+                meters_data_list = []
+                for date in dates_list:
+                    for value in values:
+                        data = MeterData.objects.filter(meter_id=value, timestamp__date=date)
+                        l = {'date': date, 'object': data}
+                        meters_data_list.append(l)
+                print(meters_data_list)
+
+                if len(meters_data) == 0:
+                    text = 'Інформація за вибраний період відсутня.'
+                else:
+                    text = 'Показники лічильників від %s до %s.' % (date_from, date_until)
+            else:
+                meters = None
+                meters_data = None
+                dates_list = []
+                meters_data_list = []
+                text = 'Виберіть діапазон дат для відображення показників.'
+            return render(
+                request,
+                'base/view_meters.html',
+                {
+                    'meters': meters,
+                    'meters_data': meters_data,
+                    'text': text,
+                    'dates_list': dates_list,
+                    'meters_data_list': meters_data_list
+                }
+            )
         else:
             return HttpResponseRedirect('/no_access/')
