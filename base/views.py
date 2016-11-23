@@ -493,35 +493,36 @@ def meter_data_view(request, id):
                     dates_list.append(date)
                 meters = Meter.objects.filter(building_id=id)
                 values = meters.values_list('id')
-                meters_data = MeterData.objects.filter(meter_id__in=values, timestamp__gte=datetime_from,
-                                                       timestamp__lte=datetime_until)
                 meters_data_list = []
+                meters_data = MeterData.objects.filter(meter_id__in=values, timestamp__gte=datetime_from, timestamp__lte=datetime_until)
                 for date in dates_list:
                     for value in values:
-                        data = MeterData.objects.filter(meter_id=value, timestamp__date=date)
-                        l = {'date': date, 'object': data}
+                        try:
+                            data = meters_data.get(meter_id=value, timestamp__date=date)
+                        except:
+                            data = {}
+                        l = {'date': date, 'object': data, 'meter_id': value[0]}
                         meters_data_list.append(l)
-                print(meters_data_list)
-
-                if len(meters_data) == 0:
+                if len(meters_data_list) == 0:
                     text = 'Інформація за вибраний період відсутня.'
                 else:
-                    text = 'Показники лічильників від %s до %s.' % (date_from, date_until)
+                    text = None
             else:
                 meters = None
-                meters_data = None
-                dates_list = []
                 meters_data_list = []
                 text = 'Виберіть діапазон дат для відображення показників.'
+                datetime_until = ''
+                datetime_from = ''
+
             return render(
                 request,
                 'base/view_meters.html',
                 {
                     'meters': meters,
-                    'meters_data': meters_data,
                     'text': text,
-                    'dates_list': dates_list,
-                    'meters_data_list': meters_data_list
+                    'meters_data_list': meters_data_list,
+                    'datetime_from': datetime_from,
+                    'datetime_until': datetime_until
                 }
             )
         else:

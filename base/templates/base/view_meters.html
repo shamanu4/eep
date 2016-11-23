@@ -7,73 +7,66 @@
             <form class="form-inline">
                 <div class="form-group">
                     <label for="sort_date_from" class="control-label">Від</label>
-                    <input name="f" type="text" class="form-control" id="sort_date_from">
+                    <input name="f" type="text" class="form-control" id="sort_date_from" value="{{ datetime_from }}">
                 </div>
                 <div class="form-group">
                     <label for="sort_date_until" class="control-label">До</label>
-                    <input name="u" type="text" class="form-control" id="sort_date_until">
+                    <input name="u" type="text" class="form-control" id="sort_date_until" value="{{ datetime_until }}">
                 </div>
                 <input type="submit" class="btn btn-primary" value="Відсортувати">
             </form>
         </div>
     </div>
-    <div class="row">
+    {% if text %}
+        <div class="row">
         <div class="col-sm-offset-2 col-md-offset-4 col-md-4 col-sm-8">
             <div class="alert alert-info text-info" role="alert"><p>{{ text }}</p></div>
         </div>
     </div>
+    {% endif %}
+
 
     {% for meter in meters %}
         {% if meter %}
             <div class="table-responsive">
-            <table class="table">
-                <thead>
-                <tr>
-                    <td colspan="3"><b>{{ meter }}</b></td>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Дата</td>
-                    {% for list in meters_data_list %}
-                        {% for data in list.object %}
-                            {% if data.meter_id == meter.id%}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr><b>Лічильник: {{ meter }}</b></tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Дата</td>
+                        {% for list in meters_data_list %}
+                            {% if list.meter_id == meter.id %}
                                 <td>{{ list.date }}</td>
                             {% endif %}
-                            {% endfor %}
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>Показник</td>
-                    {% for list in meters_data_list %}
-                        {% for data in list.object %}
-                            {% if data.meter_id == meter.id%}
-                                <td>{{ data }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Показник</td>
+                        {% for list in meters_data_list %}
+                            {% if list.meter_id == meter.id %}
+                                <td>{{ list.object.cur_data|default:"-" }}</td>
                             {% endif %}
-                            {% endfor %}
-                        <td>{{ data.date }}</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>Різниця показників</td>
-                    {% for list in meters_data_list %}
-                        {% for data in list.object %}
-                            {% if data.meter_id == meter.id%}
-                                <td>{{ data.cur_data|sub:data.prev_data }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Різниця показників</td>
+                        {% for list in meters_data_list %}
+                            {% if list.meter_id == meter.id %}
+                                <td>
+                                    {% if list.object %}
+                                        {{ list.object.cur_data|sub:list.object.prev_data }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                </td>
                             {% endif %}
-                            {% endfor %}
-                        <td>{{ data.date }}</td>
-                    {% endfor %}
-{#                    {% for data in meters_data %}#}
-{#                        {% if meter.id == data.meter_id %}#}
-{#                            <td class="{% cycle '' 'grey' %}">{{ data.cur_data|sub:data.prev_data }}</td>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
-                </tr>
-                </tbody>
-
-            </table>
-        </div>
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         {% endif %}
     {% endfor %}
 {% endblock %}
