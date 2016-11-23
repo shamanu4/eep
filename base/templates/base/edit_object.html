@@ -2,10 +2,13 @@
 {% load bootstrap3 %}
 
 {% block content %}
-    <ol class="breadcrumb">
-        <li><a href="{% url 'index' %}">Головна</a></li>
-        <li>{{ obj.name }}</li>
-    </ol>
+    <div class="row">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}">Головна</a></li>
+            <li>{{ obj.name }}</li>
+        </ol>
+    </div>
+
     <div class="col-sm-offset-2 col-md-7">
         <form method="post">
             {% csrf_token %}

@@ -1,12 +1,38 @@
+from datetime import date
+
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 from base.models import Institution, Building, Component, ComponentType, FeatureType, Feature, MeterType, Meter, \
     MeterData, Rate, Receipt, User
+from django.forms import ValidationError
+
+
+class UserChangeForm(forms.ModelForm):
+    password = ReadOnlyPasswordHashField()
+
+    class Meta:
+        model = User
+        fields = ['password']
+
+    def clean_password(self):
+        return self.initial["password"]
 
 
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['post', 'last_name', 'first_name', 'middle_name', 'parent',]
+
+
+class AdminUserForm(forms.ModelForm):
+    password = ReadOnlyPasswordHashField(label=("Пароль"), help_text=("Raw passwords are not stored, so there is no way to see "
+                                                           "this user's password, but you can change the password "
+                                                           "using <a href=\"password/\">UserChangeForm</a>."))
+
+    class Meta:
+        model = User
+        fields = '__all__'
 
 
 class InstitutionForm(forms.ModelForm):
@@ -58,6 +84,7 @@ class FeatureForm(forms.ModelForm):
         self.fields['component'] = forms.ModelChoiceField(
             queryset=component, label='Компонент', empty_label=None
         )
+
     class Meta:
         model = Feature
         fields = '__all__'

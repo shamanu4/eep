@@ -280,7 +280,7 @@ def edit_object(request, obj_id, id, type):
         if user.has_perm('lead_institution', obj):
             if request.method == 'POST':
                 form.save()
-                return HttpResponseRedirect(reverse("index"))
+                return HttpResponseRedirect(reverse("view_object", kwargs={'id': obj_id, 'type': 1}))
             return render(
                 request,
                 'base/edit_object.html',
@@ -317,7 +317,7 @@ def edit_object(request, obj_id, id, type):
                 form = ComponentForm(build, request.POST or None, instance=obj)
             if request.method == 'POST':
                 form.save()
-                return HttpResponseRedirect(reverse("index"))
+                return HttpResponseRedirect(reverse("view_object", kwargs={'id': obj_id, 'type': 2}))
             return render(
                 request,
                 'base/edit_object.html',
@@ -522,7 +522,9 @@ def meter_data_view(request, id):
                     'text': text,
                     'meters_data_list': meters_data_list,
                     'datetime_from': datetime_from,
-                    'datetime_until': datetime_until
+                    'datetime_until': datetime_until,
+                    'obj': obj
+
                 }
             )
         else:

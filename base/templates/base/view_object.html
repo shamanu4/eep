@@ -3,10 +3,13 @@
 {% block content %}
     <div class="row">
         {% if type == '1' %}
-            <ol class="breadcrumb">
-                <li><a href="{% url 'index' %}">На головну</a></li>
-                <li>{{ obj.name }}</li>
-            </ol>
+            <div class="row">
+                <ol class="breadcrumb">
+                    <li><a href="{% url 'index' %}">На головну</a></li>
+                    <li>{{ obj.name }}</li>
+                </ol>
+            </div>
+
             <div class="col-md-10">
                 <ul class="list-group">
                     <li class="list-group-item active"><span
@@ -42,8 +45,7 @@
                     <li class="list-group-item"><b>Заклад: </b>{{ obj.institution }}</li>
                     <li class="list-group-item"><b>Площа: </b>{{ obj.square }}</li>
                     <li class="list-group-item"><b>Категорія: </b>{{ obj.category }}</li>
-                    <li class="list-group-item"><b>Призначення: </b>{% if obj.purpose.name == base.ObjectPurpose.None %}
-                        {{ obj.purpose.name }} {% else %} - {% endif %}</li>
+                    <li class="list-group-item"><b>Призначення: </b>{% for item in obj.purpose.all %}{{ item }}, {% endfor %}</li>
                     </li>
                     <li class="list-group-item"><b>Дата здачі в експлуатацію: </b>{{ obj.date_from }}</li>
                     <li class="list-group-item"><b>Орендодавець: </b>{% if obj.parent %}{{ obj.parent }} {% else %}
@@ -52,7 +54,7 @@
             </div>
             <div class="col-md-3">
                 <div class="btn-group-vertical" role="group">
-                    <a href="{% url 'meter_data_view' obj.id %}" class="btn btn-default">Показники лічильника</a>
+                    <a href="{% url 'meter_data_view' obj.id %}" class="btn btn-default">Показники лічильників</a>
                     {% if lead_perm %}
                         <a href="{% url 'create_item_for_object' 1 obj.id %}" class="btn btn-default">Додати показник
                             лічильника</a>
@@ -80,25 +82,25 @@
                     {% for comp in comps %}
                         <ul class="list-group">
                             <li class="list-group-item active"><b>Характеристика: </b>{{ comp }}<a
-                                        href="{% url 'edit_object' obj.id comp.id 5 %}"
-                                        class="pull-right edit-item"><span
-                                        class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
-                        </ul>
-                            {% for feature in features %}
-                                {% if feature.component_id == comp.id %}
-                                    <ul class="list-group">
-
-                                        <li class="list-group-item"><b>Відсоток від загальної
-                                            кількості: </b>{{ feature.percentage }}<a
-                                    href="{% url 'edit_object' obj.id feature.id 3 %}"
+                                    href="{% url 'edit_object' obj.id comp.id 5 %}"
                                     class="pull-right edit-item"><span
-                                    class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-                                        </li>
-                                        <li class="list-group-item"><b>Від: </b>{{ feature.date_from }}</li>
-                                        <li class="list-group-item"><b>До: </b>{{ feature.date_until }}</li>
-                                    </ul>
-                                {% endif %}
-                            {% endfor %}
+                                    class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
+                        </ul>
+                        {% for feature in features %}
+                            {% if feature.component_id == comp.id %}
+                                <ul class="list-group">
+
+                                    <li class="list-group-item"><b>Відсоток від загальної
+                                        кількості: </b>{{ feature.percentage }}<a
+                                            href="{% url 'edit_object' obj.id feature.id 3 %}"
+                                            class="pull-right edit-item"><span
+                                            class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                                    </li>
+                                    <li class="list-group-item"><b>Від: </b>{{ feature.date_from }}</li>
+                                    <li class="list-group-item"><b>До: </b>{{ feature.date_until }}</li>
+                                </ul>
+                            {% endif %}
+                        {% endfor %}
                     {% endfor %}
                 {% else %}
                     <div class="panel panel-default">
@@ -108,33 +110,6 @@
                     </div>
                 {% endif %}
             </div>
-{#            <div class="col-md-4">#}
-{#                {% if features %}#}
-{#                    <ul class="list-group">#}
-{#                        <li class="list-group-item active"><b>Характеристики</b></li>#}
-{#                    </ul>#}
-{#                    {% for feature in features %}#}
-{#                        <ul class="list-group">#}
-{#                            <li class="list-group-item"><b>Компонент: </b>{{ feature.component }} <a#}
-{#                                    href="{% url 'edit_object' obj.id feature.id 3 %}"#}
-{#                                    class="pull-right edit-item"><span#}
-{#                                    class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>#}
-{#                            <li class="list-group-item"><b>Тип характеристики: </b>{{ feature.feature_type }}</li>#}
-{#                            <li class="list-group-item"><b>Відсоток від загальної#}
-{#                                кількості: </b>{{ feature.percentage }}#}
-{#                            </li>#}
-{#                            <li class="list-group-item"><b>Від: </b>{{ feature.date_from }}</li>#}
-{#                            <li class="list-group-item"><b>До: </b>{{ feature.date_until }}</li>#}
-{#                        </ul>#}
-{#                    {% endfor %}#}
-{#                {% else %}#}
-{#                    <div class="panel panel-default">#}
-{#                        <div class="panel-body">#}
-{#                            Характеристики відсутні#}
-{#                        </div>#}
-{#                    </div>#}
-{#                {% endif %}#}
-{#            </div>#}
             <div class="col-md-4">
                 {% if meters %}
                     <ul class="list-group">

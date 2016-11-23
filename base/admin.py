@@ -1,6 +1,7 @@
 from django.contrib import admin
 from guardian.admin import GuardedModelAdmin
 from base.models import User, Category, ObjectPurpose, Institution, Building, MeterType, Meter, MeterData, Rate, Receipt, Component, ComponentType, Feature, FeatureType
+from base.forms import AdminUserForm
 
 
 @admin.register(Building)
@@ -20,7 +21,7 @@ class InstitutionAdmin(GuardedModelAdmin):
 
 @admin.register(User)
 class UserAdmin(GuardedModelAdmin):
-    pass
+    form = AdminUserForm
 
 
 class ObjectPurposeInline(admin.TabularInline):

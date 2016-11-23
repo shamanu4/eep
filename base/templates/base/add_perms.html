@@ -2,11 +2,12 @@
 {% load i18n %}
 
 {% block content %}
-    <ol class="breadcrumb">
-        <li><a href="{% url 'index' %}">Головна</a></li>
-        <li>{{ obj.name }}</li>
-    </ol>
-
+    <div class="row">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}">Головна</a></li>
+            <li>{{ obj.name }}</li>
+        </ol>
+    </div>
     <form class="form-horizontal">
         <div class="form-group">
             <label class="col-sm-2 control-label">Користувач</label>
@@ -36,8 +37,8 @@
     </form>
     <div class="col-sm-offset-2 col-sm-8">
         <p>Права, що надані Вашим підлеглим:</p>
-            {% for item in list %}
-                <ul class="list-group">
+        {% for item in list %}
+            <ul class="list-group">
                 {% if item.perms %}
                     <li class="list-group-item active"><a href="{% url 'remove_perms' obj.id item.name.id type %}"
                     >{{ item.name.get_full_name }}</a></li>
@@ -45,8 +46,8 @@
                         <li href="#" class="list-group-item">{% trans perm %}</li>
                     {% endfor %}
                 {% endif %}
-                </ul>
-            {% endfor %}
+            </ul>
+        {% endfor %}
     </div>
 
 {% endblock %}

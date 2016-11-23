@@ -15,6 +15,7 @@ class User(AbstractUser, MPTTModel):
     first_name = models.CharField("Ім'я", max_length=50)
     middle_name = models.CharField('По-батькові', max_length=50)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True, verbose_name='Керівник')
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -209,7 +210,7 @@ class FeatureType(models.Model):
         verbose_name_plural = 'Типи характеристик'
 
     def __str__(self):
-        return self.name
+        return "%s %s" % (self.component_type, self.name)
 
 
 class Feature(models.Model):

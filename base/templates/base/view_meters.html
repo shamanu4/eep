@@ -1,7 +1,19 @@
 {% extends 'base/base.html' %}
 {% load mathfilters %}
 
+{% block content %}
+    <div class="row">
+    <ol class="breadcrumb">
+        <li><a href="{% url 'index' %}">На головну</a></li>
+        <li><a href="{% url 'view_object' obj.institution_id 1 %}">{{ obj.institution }}</a></li>
+        <li><a href="{% url 'view_object' obj.id 2 %}">{{ obj.name }}</a></li>
+        <li>Показники лічильників</li>
+    </ol>
+    </div>
+
+{% endblock %}
 {% block fluid-content %}
+
     <div class="row">
         <div class="col-sm-offset-2 col-md-offset-4 col-md-4 col-sm-8">
             <form class="form-inline">
