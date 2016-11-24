@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Permission
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import assign_perm, remove_perm, get_perms, get_objects_for_user
-from base.models import User, Institution, Building, Component, Feature, Meter, MeterData
+from base.models import User, Institution, Building, Component, Feature, Meter, MeterData, ComponentType
 from base.forms import InstitutionForm, BuildingForm, ComponentTypeForm, ComponentForm, FeatureTypeForm, FeatureForm, \
     MeterTypeForm, MeterForm, MeterDataForm, RateForm, ReceiptForm, UserForm
 from datetime import date, timedelta as td, datetime
@@ -71,6 +71,7 @@ def view_object(request, id, type):
             if type == '2':
                 comps = Component.objects.filter(building=obj.id)
                 values = comps.values_list('id')
+                comp_types = ComponentType.objects.all()
                 features = Feature.objects.filter(component_id__in=values)
                 meters = Meter.objects.filter(building_id=obj.id)
                 builds = None
