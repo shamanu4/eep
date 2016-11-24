@@ -229,7 +229,8 @@ class Feature(models.Model):
 
     def clean(self):
         current_day = date.today()
-        if self.date_until > current_day:
+        print(self.date_until)
+        if self.date_until != None and self.date_until > current_day :
             raise ValidationError({
                 'date_until': _("Поле не може бути більшим поточної дати")
             })
@@ -239,7 +240,7 @@ class Feature(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
-        comp = Component.objects.get(pk=self.component_id)
-        build = Building.objects.get(pk=comp.building_id)
-        self.date_from = build.date_from
+        if self.date_from == None:
+            build = Building.objects.get(pk=self.component.building_id)
+            self.date_from = build.date_from
         super(Feature, self).save(*args, **kwargs)

@@ -8,6 +8,7 @@ from base.models import User, Institution, Building, Component, Feature, Meter, 
 from base.forms import InstitutionForm, BuildingForm, ComponentTypeForm, ComponentForm, FeatureTypeForm, FeatureForm, \
     MeterTypeForm, MeterForm, MeterDataForm, RateForm, ReceiptForm, UserForm
 from datetime import date, timedelta as td, datetime
+from django.db.models import Q
 
 
 def index(request):
@@ -71,8 +72,8 @@ def view_object(request, id, type):
             if type == '2':
                 comps = Component.objects.filter(building=obj.id)
                 values = comps.values_list('id')
-                comp_types = ComponentType.objects.all()
-                features = Feature.objects.filter(component_id__in=values)
+                current_day = date.today()
+                features = Feature.objects.filter(Q(component_id__in=values) & Q(date_from__lte=current_day) & (Q(date_until=None) | Q(date_until=current_day)))
                 meters = Meter.objects.filter(building_id=obj.id)
                 builds = None
             else:

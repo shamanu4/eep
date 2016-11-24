@@ -86,21 +86,18 @@
                                     class="pull-right edit-item"><span
                                     class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
                         </ul>
+                        <ul class="list-group">
                         {% for feature in features %}
                             {% if feature.component_id == comp.id %}
-                                <ul class="list-group">
-
-                                    <li class="list-group-item"><b>Відсоток від загальної
-                                        кількості: </b>{{ feature.percentage }} % від {{ feature.feature_type }}<a
+                                    <li class="list-group-item">{{ feature.percentage }} % від {{ feature.feature_type }}<a
                                             href="{% url 'edit_object' obj.id feature.id 3 %}"
                                             class="pull-right edit-item"><span
                                             class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
                                     </li>
-                                    <li class="list-group-item"><b>Від: </b>{{ feature.date_from }}</li>
-                                    <li class="list-group-item"><b>До: </b>{{ feature.date_until }}</li>
-                                </ul>
+
                             {% endif %}
                         {% endfor %}
+                        </ul>
                     {% endfor %}
                 {% else %}
                     <div class="panel panel-default">
