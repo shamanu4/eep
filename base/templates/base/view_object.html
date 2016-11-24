@@ -81,7 +81,7 @@
                 {% if comps %}
                     {% for comp in comps %}
                         <ul class="list-group">
-                            <li class="list-group-item active"><b>Характеристика: </b>{{ comp }} {{ comp.type.unit }}.<a
+                            <li class="list-group-item active"><b>Компонент: </b>{{ comp }} {{ comp.type.unit }}.<a
                                     href="{% url 'edit_object' obj.id comp.id 5 %}"
                                     class="pull-right edit-item"><span
                                     class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
@@ -120,7 +120,7 @@
                             <li class="list-group-item"><b>Заклад: </b>{{ meter.institution }}</li>
                             <li class="list-group-item"><b>Будівля: </b>{{ meter.building }}</li>
                             <li class="list-group-item"><b>Тип лічильника: </b>{{ meter.meter_type }}</li>
-                            <li class="list-group-item"><b>Орендодавець: </b>{{ meter.parent }}</li>
+                            <li class="list-group-item"><b>Орендодавець: </b>{% if  meter.parent == None %}-{% else %}{{ meter.parent }}{% endif %}</li>
                         </ul>
                     {% endfor %}
                 {% else %}
