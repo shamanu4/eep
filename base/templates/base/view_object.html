@@ -44,6 +44,10 @@
                     <li class="list-group-item active">{{ obj.name }}</li>
                     <li class="list-group-item"><b>Заклад: </b>{{ obj.institution }}</li>
                     <li class="list-group-item"><b>Площа: </b>{{ obj.square }}</li>
+                    <li class="list-group-item"><b>Опалювальна площа: </b>{{ obj.heated_square }}</li>
+                    <li class="list-group-item"><b>Рпалювальний об'єм: </b>{{ obj.heated_volume }}</li>
+                    <li class="list-group-item"><b>Кількість поверхів: </b>{{ obj.floors }}</li>
+                    <li class="list-group-item"><b>Висота поверху: </b>{{ obj.floor_height }}</li>
                     <li class="list-group-item"><b>Категорія: </b>{{ obj.category }}</li>
                     <li class="list-group-item"><b>Призначення: </b>{% for item in obj.purpose.all %}{{ item }}, {% endfor %}</li>
                     </li>
