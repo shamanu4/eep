@@ -4,11 +4,13 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Permission
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import assign_perm, remove_perm, get_perms, get_objects_for_user
-from base.models import User, Institution, Building, Component, Feature, Meter, MeterData, ComponentType
+from base.models import User, Institution, Building, Component, Feature, Meter, MeterData, ComponentType, FeatureType, \
+    MeterType, Rate
 from base.forms import InstitutionForm, BuildingForm, ComponentTypeForm, ComponentForm, FeatureTypeForm, FeatureForm, \
     MeterTypeForm, MeterForm, MeterDataForm, RateForm, ReceiptForm, UserForm
 from datetime import date, timedelta as td, datetime
 from django.db.models import Q
+from invitations.models import Invitation
 
 
 def index(request):
@@ -346,23 +348,29 @@ def create_item(request, type):
                 form = MeterTypeForm(request.POST)
             else:
                 form = RateForm(request.POST)
-            form.save()
+            if form.is_valid():
+                form.save()
             return HttpResponseRedirect(reverse("index"))
         else:
             if type == '3':
+                items_list = ComponentType.objects.all()
                 form = ComponentTypeForm()
             elif type == '4':
+                items_list = FeatureType.objects.all()
                 form = FeatureTypeForm()
             elif type == '5':
+                items_list = MeterType.objects.all()
                 form = MeterTypeForm()
             else:
+                items_list = Rate.objects.all()
                 form = RateForm()
         return render(
             request,
             'base/create_object.html',
             {
                 'type': type,
-                'form': form
+                'form': form,
+                'items_list': items_list
             })
     else:
         return HttpResponseRedirect('/no_access/')
@@ -416,23 +424,23 @@ def create_item_for_object(request, type, id):
             return HttpResponseRedirect('/no_access/')
 
 
-# def invite(request):
-#     user = request.user
-#     if not user.is_authenticated():
-#         return HttpResponseRedirect('accounts/login/')
-#     else:
-#         text = ''
-#         if user.has_perm('base.invite_users'):
-#             if request.GET.get('e'):
-#                 email = request.GET['e']
-#                 invite = Invitation.create(email, inviter=request.user)
-#                 invite.send_invitation(request)
-#                 text = 'Запрошення на адресу %s надіслане' % email
-#             return render(request, 'base/invite.html', {
-#                 'text': text
-#             })
-#         else:
-#             return HttpResponseRedirect('/no_access/')
+def invite(request):
+    user = request.user
+    if not user.is_authenticated():
+        return HttpResponseRedirect('accounts/login/')
+    else:
+        text = ''
+        if user.has_perm('base.invite_users'):
+            if request.GET.get('e'):
+                email = request.GET['e']
+                invite = Invitation.create(email, inviter=request.user)
+                invite.send_invitation(request)
+                text = 'Запрошення на адресу %s надіслане' % email
+            return render(request, 'base/invite.html', {
+                'text': text
+            })
+        else:
+            return HttpResponseRedirect('/no_access/')
 
 
 def cabinet(request):

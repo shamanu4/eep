@@ -10,9 +10,9 @@
             {% elif type == '2' %}
                 <li>Додати будівлю</li>
             {% elif type == '3' %}
-                <li>Додати тип компоненту</li>
+                <li>Додати компонент</li>
             {% elif type == '4' %}
-                <li>Додати тип характеристики</li>
+                <li>Додати тип компоненту</li>
             {% elif type == '5' %}
                 <li>Додати тип лічильника</li>
             {% elif type == '6' %}
@@ -20,8 +20,7 @@
             {% endif %}
         </ol>
     </div>
-
-    <div class="col-sm-offset-2 col-md-7">
+    <div class="col-md-offset-2 col-md-7">
         <form method="post">
             {% csrf_token %}
             {% bootstrap_form form %}
@@ -32,4 +31,18 @@
             {% endbuttons %}
         </form>
     </div>
+    {% if items_list %}
+        <div class="row">
+            <div class="col-md-offset-2 col-md-7">
+                <ul class="list-group">
+                    <p>Створені записи в довіднику:</p>
+                    {% for item in items_list %}
+                        <li class="list-group-item">{{ item }}</li>
+                    {% empty %}
+                        <li class="list-group-item">Записи в довіднику відсутні</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -15,7 +15,7 @@
 {% block fluid-content %}
 
     <div class="row">
-        <div class="col-sm-offset-2 col-md-offset-4 col-md-4 col-sm-8">
+        <div class="col-sm-offset-2 col-md-offset-3 col-lg-offset-4 col-sm-8 col-md-8 col-lg-8">
             <form class="form-inline">
                 <div class="form-group">
                     <label for="sort_date_from" class="control-label">Від</label>
@@ -30,10 +30,8 @@
         </div>
     </div>
     {% if text %}
-        <div class="row">
-        <div class="col-sm-offset-2 col-md-offset-4 col-md-4 col-sm-8">
+        <div class="center">
             <div class="alert alert-info text-info" role="alert"><p>{{ text }}</p></div>
-        </div>
     </div>
     {% endif %}
 

@@ -39,24 +39,25 @@
                 <li><a href="{% url 'view_object' obj.institution_id 1 %}">{{ obj.institution }}</a></li>
                 <li>{{ obj.name }}</li>
             </ol>
-            <div class="col-md-9">
+            <div class="col-md-9 col-sm-9">
                 <ul class="list-group">
                     <li class="list-group-item active">{{ obj.name }}</li>
                     <li class="list-group-item"><b>Заклад: </b>{{ obj.institution }}</li>
                     <li class="list-group-item"><b>Площа: </b>{{ obj.square }} м<sup>2</sup>.</li>
                     <li class="list-group-item"><b>Опалювальна площа: </b>{{ obj.heated_square }} м<sup>2</sup>.</li>
-                    <li class="list-group-item"><b>Рпалювальний об'єм: </b>{{ obj.heated_volume }} м<sup>3</sup>.</li>
+                    <li class="list-group-item"><b>Опалювальний об'єм: </b>{{ obj.heated_volume }} м<sup>3</sup>.</li>
                     <li class="list-group-item"><b>Кількість поверхів: </b>{{ obj.floors }}</li>
                     <li class="list-group-item"><b>Висота поверху: </b>{{ obj.floor_height }} м.</li>
                     <li class="list-group-item"><b>Категорія: </b>{{ obj.category }}</li>
-                    <li class="list-group-item"><b>Призначення: </b>{% for item in obj.purpose.all %}{{ item }}, {% endfor %}</li>
+                    <li class="list-group-item"><b>Призначення: </b>{% for item in obj.purpose.all %}{{ item }}
+                        , {% endfor %}</li>
                     </li>
                     <li class="list-group-item"><b>Дата здачі в експлуатацію: </b>{{ obj.date_from }}</li>
                     <li class="list-group-item"><b>Орендодавець: </b>{% if obj.parent %}{{ obj.parent }} {% else %}
                         - {% endif %}</li>
                 </ul>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-3">
                 <div class="btn-group-vertical" role="group">
                     <a href="{% url 'meter_data_view' obj.id %}" class="btn btn-default">Показники лічильників</a>
                     {% if lead_perm %}
@@ -68,11 +69,12 @@
                         <a href='{% url 'create_item_for_object' 3 obj.id %}' class="btn btn-default">Додати
                             компонент</a>
                         <a href='{% url 'create_item_for_object' 4 obj.id %}' class="btn btn-default">Додати
-                            характеристику</a>
+                            тип компоненту</a>
                         <a href="{% url 'edit_object' obj.id obj.id 2 %}" class="btn btn-default">Редагувати об'єкт</a>
+                        <a href="{% url 'delegate_perms' obj.id 2 %}" class="btn btn-default">Редагувати права</a>
                     {% endif %}
                     {% if delegate_perm %}
-                        <a href="{% url 'delegate_perms' obj.id 2 %}" class="btn btn-default">Редагувати права</a>
+                        <a href="{% url 'invitations:send-invite'  %}" class="btn btn-default">Запросити користувача</a>
                     {% endif %}
                 </div>
             </div>
@@ -85,22 +87,20 @@
                 {% if comps %}
                     {% for comp in comps %}
                         <ul class="list-group">
-                            <li class="list-group-item active"><b>Компонент: </b>{{ comp }} {{ comp.type.unit }}.<a
+                            <li class="list-group-item grey"><b>Компонент: </b>{{ comp.view_name }} {{ comp.type.unit }}.<a
                                     href="{% url 'edit_object' obj.id comp.id 5 %}"
                                     class="pull-right edit-item"><span
                                     class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
-                        </ul>
-                        <ul class="list-group">
-                        {% for feature in features %}
-                            {% if feature.component_id == comp.id %}
-                                    <li class="list-group-item">{{ feature.percentage }} % від {{ feature.feature_type }}<a
-                                            href="{% url 'edit_object' obj.id feature.id 3 %}"
-                                            class="pull-right edit-item"><span
-                                            class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                            {% for feature in features %}
+                                {% if feature.component_id == comp.id %}
+                                    <li class="list-group-item">{{ feature.percentage }} %
+                                        від {{ feature.feature_type }}<a
+                                                href="{% url 'edit_object' obj.id feature.id 3 %}"
+                                                class="pull-right edit-item"><span
+                                                class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
                                     </li>
-
-                            {% endif %}
-                        {% endfor %}
+                                {% endif %}
+                            {% endfor %}
                         </ul>
                     {% endfor %}
                 {% else %}
@@ -114,7 +114,7 @@
             <div class="col-md-4">
                 {% if meters %}
                     <ul class="list-group">
-                        <li class="list-group-item active"><b>Лічильники</b></li>
+                        <li class="list-group-item grey"><b>Лічильники</b></li>
                     </ul>
                     {% for meter in meters %}
                         <ul class="list-group">
@@ -122,7 +122,8 @@
                                     href="{% url 'edit_object' obj.id meter.id 4 %}" class="pull-right edit-item"><span
                                     class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>
                             <li class="list-group-item"><b>Тип лічильника: </b>{{ meter.meter_type }}</li>
-                            <li class="list-group-item"><b>Орендодавець: </b>{% if  meter.parent == None %}-{% else %}{{ meter.parent }}{% endif %}</li>
+                            <li class="list-group-item"><b>Орендодавець: </b>{% if  meter.parent == None %}-{% else %}
+                                {{ meter.parent }}{% endif %}</li>
                         </ul>
                     {% endfor %}
                 {% else %}

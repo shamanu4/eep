@@ -3,30 +3,17 @@ $white: #FFFFFF;
 $blue: #337AB7;
 $light-grey: #ececec;
 
-.login-form {
-  height: auto;
-  margin: 0 auto;
-  padding-top: 16.3%;
-  form {
-    padding-top: 2.5%;
-    button {
-      float: right;
-    }
-  }
-}
-
 .list-group {
   .glyphicon-edit {
     opacity: 0;
     transition-duration: 0.3s;
     margin-left: 1%;
-    color: $blue
   }
   .active:hover .glyphicon-edit {
     opacity: 1;
     color: $white;
   }
-  &:hover .glyphicon-edit {
+  &-item:hover .glyphicon-edit {
     opacity: 1;
   }
   .active a {
@@ -44,6 +31,7 @@ $light-grey: #ececec;
     color: $black
   }
 }
+
 select[readonly] {
   cursor: not-allowed;
 }
@@ -54,4 +42,21 @@ select[readonly] {
 
 .text-info {
   margin-top: 2.36% !important;
+}
+
+hr {
+  margin-bottom: 10px;
+}
+
+.btn-group-vertical.stat {
+  width: 100%;
+}
+
+.center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: center;
+  -webkit-box-pack: center;
+  justify-content: center;
 }

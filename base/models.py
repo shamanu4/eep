@@ -42,7 +42,7 @@ class User(AbstractUser, MPTTModel):
 
 
 class Category(models.Model):
-    name = models.CharField('Назва категорії', max_length=100)
+    name = models.CharField('Назва категорії', max_length=100, unique=True)
 
     class Meta:
         verbose_name = "Категорія"
@@ -59,13 +59,14 @@ class ObjectPurpose(models.Model):
     class Meta:
         verbose_name = "Призначення об'єкта"
         verbose_name_plural = "Призначення об'єктів"
+        unique_together = ('name', 'category')
 
     def __str__(self):
         return "%s: %s" % (self.category, self.name)
 
 
 class Institution(models.Model):
-    name = models.CharField('Назва закладу', max_length=500)
+    name = models.CharField('Назва закладу', max_length=500, unique=True)
 
     class Meta:
         permissions = (
@@ -100,13 +101,14 @@ class Building(MPTTModel):
         )
         verbose_name = 'Будівля'
         verbose_name_plural = 'Будівлі'
+        unique_together = ('name', 'institution')
 
     def __str__(self):
         return "%s %s" % (self.name, self.institution)
 
 
 class MeterType(models.Model):
-    name = models.CharField('Тип лічильника', max_length=200)
+    name = models.CharField('Тип лічильника', max_length=200, unique=True)
     unit = models.CharField('Одиниця виміру', max_length=50)
 
     class Meta:
@@ -128,6 +130,7 @@ class Meter(MPTTModel):
     class Meta:
         verbose_name = 'Лічильник'
         verbose_name_plural = 'Лічильники'
+        unique_together = ('name', 'institution', 'building', 'meter_type')
 
     def __str__(self):
         return "%s %s" % (self.meter_type, self.name)
@@ -158,6 +161,7 @@ class Rate(models.Model):
     class Meta:
         verbose_name = 'Тариф'
         verbose_name_plural = 'Тарифи'
+        unique_together = ('category', 'meter_type', 'price')
 
     def __str__(self):
         return "%s %s грн." % (self.meter_type, self.price)
@@ -181,7 +185,7 @@ class Receipt(models.Model):
 
 
 class ComponentType(models.Model):
-    name = models.CharField('Назва', max_length=250)
+    name = models.CharField('Назва', max_length=250, unique=True)
     unit = models.CharField('Одиниця виміру', max_length=100)
 
     class Meta:
@@ -204,14 +208,18 @@ class Component(models.Model):
     def __str__(self):
         return "%s %s %s" % (self.building, self.type, self.quantity)
 
+    def view_name(self):
+        return "%s %s" % (self.type, self.quantity)
+
 
 class FeatureType(models.Model):
-    component_type = models.ForeignKey(ComponentType, verbose_name='Тип компоненту')
+    component_type = models.ForeignKey(ComponentType, verbose_name='Довідник компонентів')
     name = models.CharField('Назва', max_length=250)
 
     class Meta:
-        verbose_name = 'Тип Характеристики'
-        verbose_name_plural = 'Типи характеристик'
+        verbose_name = 'Типи компонентів'
+        verbose_name_plural = 'Типи компоненту'
+        unique_together = ('component_type', 'name')
 
     def __str__(self):
         return "%s %s" % (self.component_type, self.name)
@@ -219,14 +227,14 @@ class FeatureType(models.Model):
 
 class Feature(models.Model):
     component = models.ForeignKey(Component, verbose_name='Компонент')
-    feature_type = models.ForeignKey(FeatureType, verbose_name='Тип характеристики')
+    feature_type = models.ForeignKey(FeatureType, verbose_name='Довідник типів компонентів')
     percentage = models.DecimalField('Відсоток від загальної кількості', max_digits=5, decimal_places=2, validators=[MinValueValidator(0), MaxValueValidator(100)])
     date_from = models.DateField('Від', blank=True, null=True)
     date_until = models.DateField('До', blank=True, null=True)
 
     class Meta:
-        verbose_name = 'Характеристика'
-        verbose_name_plural = 'Характеристики'
+        verbose_name = 'Тип'
+        verbose_name_plural = 'Типи'
 
     def __str__(self):
         return "%s %s %s" % (self.component, self.feature_type, self.percentage)

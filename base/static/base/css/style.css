@@ -1,21 +1,11 @@
-.login-form {
-  height: auto;
-  margin: 0 auto;
-  padding-top: 16.3%; }
-  .login-form form {
-    padding-top: 2.5%; }
-    .login-form form button {
-      float: right; }
-
 .list-group .glyphicon-edit {
   opacity: 0;
   transition-duration: 0.3s;
-  margin-left: 1%;
-  color: #337AB7; }
+  margin-left: 1%; }
 .list-group .active:hover .glyphicon-edit {
   opacity: 1;
   color: #FFFFFF; }
-.list-group:hover .glyphicon-edit {
+.list-group-item:hover .glyphicon-edit {
   opacity: 1; }
 .list-group .active a {
   color: #FFFFFF; }
@@ -36,5 +26,19 @@ select[readonly] {
 
 .text-info {
   margin-top: 2.36% !important; }
+
+hr {
+  margin-bottom: 10px; }
+
+.btn-group-vertical.stat {
+  width: 100%; }
+
+.center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: center;
+  -webkit-box-pack: center;
+  justify-content: center; }
 
 /*# sourceMappingURL=style.css.map */
