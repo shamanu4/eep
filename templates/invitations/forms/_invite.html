@@ -4,20 +4,26 @@
 {% load i18n %}
 
 {% block content %}
-    <h4 class="title">Запрошення нового користувача</h4>
-{#<span class="alert alert-info">{% trans "Please add an email below. The user will recieve an email with instructions." %}</span>#}
+    <div class="row">
+    <div class="col-md-offset-2 col-md-7">
+        <h4 class="title">Запрошення нового користувача</h4>
+        {#<span class="alert alert-info">{% trans "Please add an email below. The user will recieve an email with instructions." %}</span>#}
+        <form id="invite-form" method="POST" action="{% url 'invitations:send-invite' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="email" id="id_email" class="form-control validate-email"
+                       placeholder="Електронна скринька">
+            </div>
+            <div class="form-group">
+                {% for error in form.email.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+                {{ success_message }}
+            </div>
+            <input type="submit" value="Відправити" class="btn btn-primary generic-ajax-submit">
+        </form>
+    </div>
+    </div>
 
-<form id="invite-form" method="POST" action="{% url 'invitations:send-invite' %}">
-  {% csrf_token %}
-  <div class="form-group">
-      <input type="text" name="email" id="id_email" class="form-control validate-email" placeholder="Електронна скринька">
-  </div>
-  <div class="form-group">
-    {% for error in form.email.errors %}
-      <div class="alert alert-danger">{{ error }}</div>
-    {% endfor %}
-    {{ success_message }}
-  </div>
-  <input type="submit" value="Відправити" class="btn btn-primary generic-ajax-submit">
-</form>
+
 {% endblock %}
