@@ -3,3 +3,4 @@ pep8:
 pylint:
   disable:
     - invalid-encoded-data
+    - old-style-class
